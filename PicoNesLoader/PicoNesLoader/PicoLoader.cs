@@ -4,6 +4,7 @@ namespace PicoNesLoader
 {
     public partial class PicoLoader : Form
     {
+        public List<NesRom> romList = new List<NesRom>();
         public PicoLoader()
         {
             InitializeComponent();
@@ -11,6 +12,7 @@ namespace PicoNesLoader
 
         private void button1_Click(object sender, EventArgs e)
         {
+            var NesRom = new NesRom(@"roms\CVIII.nes");
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo

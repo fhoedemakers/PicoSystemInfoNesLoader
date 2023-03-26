@@ -21,6 +21,9 @@
     <None Update="roms\bonk.nes">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="roms\cvIII.nes">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="roms\dk.nes">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
