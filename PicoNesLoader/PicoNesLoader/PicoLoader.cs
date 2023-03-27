@@ -220,7 +220,7 @@ namespace PicoNesLoader
                         StartInfo = new ProcessStartInfo
                         {
                             FileName = executable,
-                            Arguments = $"load {tarFileName} -t bin -o 0x10090000",
+                            Arguments = $"load {tarFileName} -t bin -o 0x10110000",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             CreateNoWindow = true
