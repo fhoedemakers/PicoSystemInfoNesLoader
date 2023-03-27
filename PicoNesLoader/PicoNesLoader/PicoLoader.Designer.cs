@@ -48,11 +48,17 @@
             this.buttonDelete = new System.Windows.Forms.Button();
             this.buttonClearAll = new System.Windows.Forms.Button();
             this.buttonCreateTar = new System.Windows.Forms.Button();
+            this.timerCheckPico = new System.Windows.Forms.Timer(this.components);
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabelCheckPico = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelLinkToDriver = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nesRomBindingSource)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -231,21 +237,62 @@
             this.buttonClearAll.TabIndex = 3;
             this.buttonClearAll.Text = "Clear List";
             this.buttonClearAll.UseVisualStyleBackColor = true;
+            this.buttonClearAll.Click += new System.EventHandler(this.buttonClearAll_Click);
             // 
             // buttonCreateTar
             // 
+            this.buttonCreateTar.Enabled = false;
             this.buttonCreateTar.Location = new System.Drawing.Point(12, 367);
             this.buttonCreateTar.Name = "buttonCreateTar";
             this.buttonCreateTar.Size = new System.Drawing.Size(142, 23);
             this.buttonCreateTar.TabIndex = 4;
             this.buttonCreateTar.Text = "Upload To PicoSystem";
             this.buttonCreateTar.UseVisualStyleBackColor = true;
+            this.buttonCreateTar.Click += new System.EventHandler(this.buttonCreateTar_Click);
+            // 
+            // timerCheckPico
+            // 
+            this.timerCheckPico.Interval = 1000;
+            this.timerCheckPico.Tick += new System.EventHandler(this.timerCheckPico_Tick);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabelCheckPico,
+            this.toolStripStatusLabelLinkToDriver,
+            this.toolStripProgressBar1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 504);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.TabIndex = 5;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabelCheckPico
+            // 
+            this.toolStripStatusLabelCheckPico.Name = "toolStripStatusLabelCheckPico";
+            this.toolStripStatusLabelCheckPico.Size = new System.Drawing.Size(92, 17);
+            this.toolStripStatusLabelCheckPico.Text = "Checking Pico...";
+            // 
+            // toolStripStatusLabelLinkToDriver
+            // 
+            this.toolStripStatusLabelLinkToDriver.IsLink = true;
+            this.toolStripStatusLabelLinkToDriver.Name = "toolStripStatusLabelLinkToDriver";
+            this.toolStripStatusLabelLinkToDriver.Size = new System.Drawing.Size(167, 17);
+            this.toolStripStatusLabelLinkToDriver.Text = "Click here to install USB driver.";
+            this.toolStripStatusLabelLinkToDriver.Click += new System.EventHandler(this.toolStripStatusLabelLinkToDriver_Click);
+            // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
             // 
             // PicoLoader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 526);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.buttonCreateTar);
             this.Controls.Add(this.buttonClearAll);
             this.Controls.Add(this.buttonDelete);
@@ -255,7 +302,7 @@
             this.Controls.Add(this.button_AddRoms);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PicoLoader";
-            this.Text = "PicoNesLoader";
+            this.Text = "PicoSystem_InfoNes - NES Rom uploader";
             this.Load += new System.EventHandler(this.PicoLoader_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -264,6 +311,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nesRomBindingSource)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,5 +343,10 @@
         private DataGridViewButtonColumn DeleteRow;
         private Button buttonClearAll;
         private Button buttonCreateTar;
+        private System.Windows.Forms.Timer timerCheckPico;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel toolStripStatusLabelCheckPico;
+        private ToolStripStatusLabel toolStripStatusLabelLinkToDriver;
+        private ToolStripProgressBar toolStripProgressBar1;
     }
 }
