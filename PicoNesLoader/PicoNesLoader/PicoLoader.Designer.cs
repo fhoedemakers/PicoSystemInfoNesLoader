@@ -46,6 +46,8 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonDelete = new System.Windows.Forms.Button();
+            this.buttonClearAll = new System.Windows.Forms.Button();
+            this.buttonCreateTar = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -102,7 +104,7 @@
             this.groupBox2.Size = new System.Drawing.Size(776, 305);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Create tar archive from files in this list:";
+            this.groupBox2.Text = "Add NES roms to the list below:";
             // 
             // dataGridView1
             // 
@@ -221,11 +223,31 @@
             this.buttonDelete.UseVisualStyleBackColor = true;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
+            // buttonClearAll
+            // 
+            this.buttonClearAll.Location = new System.Drawing.Point(275, 338);
+            this.buttonClearAll.Name = "buttonClearAll";
+            this.buttonClearAll.Size = new System.Drawing.Size(127, 23);
+            this.buttonClearAll.TabIndex = 3;
+            this.buttonClearAll.Text = "Clear List";
+            this.buttonClearAll.UseVisualStyleBackColor = true;
+            // 
+            // buttonCreateTar
+            // 
+            this.buttonCreateTar.Location = new System.Drawing.Point(12, 367);
+            this.buttonCreateTar.Name = "buttonCreateTar";
+            this.buttonCreateTar.Size = new System.Drawing.Size(142, 23);
+            this.buttonCreateTar.TabIndex = 4;
+            this.buttonCreateTar.Text = "Upload To PicoSystem";
+            this.buttonCreateTar.UseVisualStyleBackColor = true;
+            // 
             // PicoLoader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 526);
+            this.Controls.Add(this.buttonCreateTar);
+            this.Controls.Add(this.buttonClearAll);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -270,5 +292,7 @@
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumnName;
         private DataGridViewTextBoxColumn SizeinKBytes;
         private DataGridViewButtonColumn DeleteRow;
+        private Button buttonClearAll;
+        private Button buttonCreateTar;
     }
 }
