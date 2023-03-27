@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PicoNesLoader
 {
 
-    public class NesRom
+    public class NesRom : IEquatable<NesRom>
     {
         public enum RomType { Valid, NoRom, InvalidMapper };
 
@@ -147,36 +147,83 @@ namespace PicoNesLoader
         252,
         255 };
 
-        public byte[] RomContents { get; private set; }
+        public int Mapper { get; set; }
+        public long SizeInBytes { get; set; }
 
-        public RomType ValidRom { get; private set; }
+        public long SizeinKBytes { get { return SizeInBytes / 1024; } }
 
-        public string Name { get; private set; }
+        public RomType ValidRom { get; set; }
 
+        public string Name { get; set; }
+
+        public string FullpathName { get; set; }
         public NesRom(string fileName)
         {
-            ValidRom = RomType.Valid;
+            ValidRom = RomType.NoRom;
             Name = Path.GetFileName(fileName);
-            RomContents = File.ReadAllBytes(fileName);
-            if (RomContents[0] == 'N' &&
-                RomContents[1] == 'E' &&
-                RomContents[2] == 'S' &&
-                RomContents[3] == 0x1A)
+            FullpathName = fileName;
+
+
+            // = File.ReadAllBytes(fileName);
+            FileInfo fi = new FileInfo(fileName);
+            SizeInBytes = fi.Length;
+            byte[] RomHeader = new byte[7];
+            if (SizeInBytes > RomHeader.Length)
             {
-                int mapper = RomContents[6] >> 4;
-                var valid = ValidMappers.Where(x => x == mapper);
-                if (valid.Count() > 0)
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    ValidRom = RomType.InvalidMapper;
+                    var bytes_read = fs.Read(RomHeader, 0, RomHeader.Length);
+                    if (bytes_read == RomHeader.Length)
+                    {
+                        if (RomHeader[0] == 'N' &&
+                            RomHeader[1] == 'E' &&
+                            RomHeader[2] == 'S' &&
+                            RomHeader[3] == 0x1A)
+                        {
+                            Mapper = RomHeader[6] >> 4;
+                            var valid = ValidMappers.Where(x => x == Mapper);
+                            if (valid.Count() == 0)
+                            {
+                                ValidRom = RomType.InvalidMapper;
+                            }
+                            else
+                            {
+                                ValidRom = RomType.Valid;
+                            }
+                        }
+                    }
                 }
 
-
-            } else
-            {
-                ValidRom = RomType.NoRom;
             }
-
+        }
+        public NesRom()
+        {
 
         }
+
+        public bool Equals(NesRom other)
+        {
+            //Check whether the compared object is null.
+            if (Object.ReferenceEquals(other, null)) return false;
+
+            //Check whether the compared object references the same data.
+            if (Object.ReferenceEquals(this, other)) return true;
+
+            //Check whether the products' properties are equal.
+            return FullpathName.Equals(other.FullpathName);
+        }
+
+        // If Equals() returns true for a pair of objects
+        // then GetHashCode() must return the same value for these objects.
+
+        public override int GetHashCode()
+        {
+
+            //Get hash code for the Name field if it is not null.
+            int hashProductName = FullpathName == null ? 0 : FullpathName.GetHashCode();
+            //Calculate the hash code for the product.
+            return hashProductName;
+        }
     }
+
 }
