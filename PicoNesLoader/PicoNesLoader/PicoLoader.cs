@@ -156,7 +156,8 @@ namespace PicoNesLoader
 
         private void CalculateTarSize()
         {
-            totalTarSize = romList.Where(x => x.ValidRom == NesRom.RomType.Valid).Select(y => (y.SizeInBytes + 512 + 511) & ~512).Sum();
+            int paxHeaderSize = ((128 + 512 + 511) & ~512);
+            totalTarSize = romList.Where(x => x.ValidRom == NesRom.RomType.Valid).Select(y => ((y.SizeInBytes + 512 + 511) & ~512) + paxHeaderSize).Sum() + 1024;
             // labelTotalSize.Text = $"{totalTarSize / 1024 / 1024} MB / {MaxTarSize / 1024 / 1024} MB";
             labelTotalSize.Text = $"{totalTarSize / 1024} KB / {MaxTarSize / 1024} KB";
             if (totalTarSize > MaxTarSize)
