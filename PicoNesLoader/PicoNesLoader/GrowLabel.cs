@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace PicoLoader {
+namespace PicoNesLoader {
     public class GrowLabel : Label
     {
         private bool mGrowing;

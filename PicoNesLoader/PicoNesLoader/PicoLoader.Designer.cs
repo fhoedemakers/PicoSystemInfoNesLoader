@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.growLabel1 = new PicoNesLoader.GrowLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.button_AddRoms = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -55,7 +56,7 @@
             this.panelButtons = new System.Windows.Forms.Panel();
             this.labelTotalSize = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-           
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -69,13 +70,23 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            
+            this.groupBox1.Controls.Add(this.growLabel1);
             this.groupBox1.Controls.Add(this.linkLabel1);
             this.groupBox1.Location = new System.Drawing.Point(12, 398);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(776, 100);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // growLabel1
+            // 
+            this.growLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.growLabel1.Location = new System.Drawing.Point(6, 19);
+            this.growLabel1.Name = "growLabel1";
+            this.growLabel1.Size = new System.Drawing.Size(764, 15);
+            this.growLabel1.TabIndex = 2;
+            this.growLabel1.Text = "growLabel1";
             // 
             // linkLabel1
             // 
@@ -213,8 +224,8 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
-            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
+            this.saveToolStripMenuItem.Text = "Exit";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // buttonDelete
@@ -315,13 +326,23 @@
             this.label1.Size = new System.Drawing.Size(112, 15);
             this.label1.TabIndex = 6;
             this.label1.Text = "Total size of archive:";
-            
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(478, 339);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.buttonCreateTar_Click);
             // 
             // PicoLoader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 526);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.panelButtons);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox2);
@@ -330,6 +351,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PicoLoader";
             this.Text = "PicoSystem_InfoNes - NES Rom uploader";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PicoLoader_FormClosing);
             this.Load += new System.EventHandler(this.PicoLoader_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -379,6 +401,7 @@
         private DataGridViewTextBoxColumn SizeinKBytes;
         private DataGridViewButtonColumn DeleteRow;
         private LinkLabel linkLabel1;
-        
+        private PicoNesLoader.GrowLabel growLabel1;
+        private Button button2;
     }
 }

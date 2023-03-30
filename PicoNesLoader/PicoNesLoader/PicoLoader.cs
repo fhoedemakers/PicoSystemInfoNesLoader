@@ -12,6 +12,7 @@ namespace PicoNesLoader
     {
         private enum PicoStatus { OK, NoBootSel, NeedDriver, UnknownError };
 
+        bool tasksRunning = false;
 
         private PicoStatus picoStatus;
         private string outputOfPicoTool = string.Empty;
@@ -28,14 +29,16 @@ namespace PicoNesLoader
 
         private string _tempDir = string.Empty;
 
-        private string tempDir { get
+        private string tempDir
+        {
+            get
             {
-                if ( string.IsNullOrEmpty(_tempDir))
+                if (string.IsNullOrEmpty(_tempDir))
                 {
                     _tempDir = GetTemporaryDirectoryName();
                 }
                 return _tempDir;
-            } 
+            }
         }
         public PicoLoader()
         {
@@ -84,6 +87,7 @@ namespace PicoNesLoader
         private void PicoLoader_Load(object sender, EventArgs e)
         {
             //labelInfo.Text = infoLabelText;
+            growLabel1.Text = infoLabelText;
             toolStripStatusLabelLinkToDriver.Visible = false;
             nesRomBindingSource.DataSource = romList;
             CalculateTarSize();
@@ -94,12 +98,12 @@ namespace PicoNesLoader
 
         private void displayPicoStatus()
         {
-            toolStripStatusLabelLinkToDriver.Visible = false;          
+            toolStripStatusLabelLinkToDriver.Visible = false;
             buttonCreateTar.Enabled = (totalTarSize > 0 && totalTarSize <= MaxTarSize);
             switch (picoStatus)
             {
                 case PicoStatus.OK:
-                    toolStripStatusLabelCheckPico.Text = "PicoSystem connected!";                
+                    toolStripStatusLabelCheckPico.Text = "PicoSystem connected!";
                     break;
                 case PicoStatus.NoBootSel:
                     buttonCreateTar.Enabled = false;
@@ -119,7 +123,7 @@ namespace PicoNesLoader
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -133,22 +137,33 @@ namespace PicoNesLoader
 
         private async void button_AddRoms_Click(object sender, EventArgs e)
         {
+            timerCheckPico.Enabled = false;
             dataGridView1.DataSource = null;
             if (openFileDialogNES.ShowDialog() == DialogResult.OK && openFileDialogNES.FileNames.Length > 0)
             {
                 panelButtons.Enabled = false;
-                Progress<int> progress = new Progress<int>( value =>
+                toolStripStatusLabelCheckPico.Text = "Loading files.";
+                Progress<int> progress = new Progress<int>(value =>
                 {
-                    toolStripProgressBar1.ProgressBar.Value = value;
+                    try
+                    {
+                        toolStripProgressBar1.ProgressBar.Value = value;
+                    }
+                    catch
+                    {
+                    }
                 });
+                tasksRunning = true;
                 await Task.Run(
-                    () =>  UploadFile(progress));
-                
+                    () => UploadFile(progress));
+                tasksRunning = false;
                 dataGridView1.DataSource = romList;
-               // dataGridView1.Sort(dataGridView1.Columns["dataGridViewTextBoxColumnName"], ListSortDirection.Ascending);
+                // dataGridView1.Sort(dataGridView1.Columns["dataGridViewTextBoxColumnName"], ListSortDirection.Ascending);
             }
             CalculateTarSize();
+            toolStripStatusLabelCheckPico.Text = "Done.";
             panelButtons.Enabled = true;
+            timerCheckPico.Enabled = true;
         }
 
         private void UploadFile(IProgress<int> progress)
@@ -162,11 +177,11 @@ namespace PicoNesLoader
                 var complete = (i * 100) / openFileDialogNES.FileNames.Length;
                 progress.Report(complete);
             }
-            
+
             var distinctList = list.Distinct().ToList();
             distinctList.Sort();
 
-           
+
             foreach (var item in distinctList)
             {
                 romList.Add((NesRom)item);
@@ -174,7 +189,7 @@ namespace PicoNesLoader
         }
         private void CalculateTarSize()
         {
-            int paxHeaderSize = 1024; 
+            int paxHeaderSize = 1024;
             totalTarSize = romList.Where(x => x.ValidRom == NesRom.RomType.Valid).Select(y => ((y.SizeInBytes + 512 + 511) & ~511) + paxHeaderSize).Sum();
             if (totalTarSize > 0)
             {
@@ -204,42 +219,64 @@ namespace PicoNesLoader
 
         private async void buttonCreateTar_Click(object sender, EventArgs e)
         {
-            timerCheckPico.Enabled = false;
-            Progress<int> progress = new Progress<int>(value =>
+            if (romList.Count > 0)
             {
-                toolStripProgressBar1.ProgressBar.Value= value;
-            });
-            await Task.Run(() => ProcessToPicoSystem(progress));
-            if (!string.IsNullOrEmpty(outputOfPicoToolFlash)) {
-                MessageBox.Show(outputOfPicoToolFlash, "Error flashing PicoSystem", MessageBoxButtons.OK, MessageBoxIcon.Error);   
+                timerCheckPico.Enabled = false;
+                Progress<ProgressReport> progress = new Progress<ProgressReport>(value =>
+                {
+                    toolStripProgressBar1.ProgressBar.Value = value.Complete;
+                    toolStripStatusLabelCheckPico.Text = value.info;
+                });
+                tasksRunning = true;
+                await Task.Run(() => ProcessToPicoSystem(progress));
+                tasksRunning = false;
+                if (!string.IsNullOrEmpty(outputOfPicoToolFlash))
+                {
+                    MessageBox.Show(outputOfPicoToolFlash, "Error flashing PicoSystem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                timerCheckPico.Enabled = true;
             }
-            timerCheckPico.Enabled = true;
-           
+
         }
 
-        private void ProcessToPicoSystem(IProgress<int>Progress)
+        private void ProcessToPicoSystem(IProgress<ProgressReport> Progress)
         {
             outputOfPicoToolFlash = string.Empty;
             var tarFileName = GetTemporaryFileName(".tar");
-            Progress.Report(0);
+            
             var files = romList.Where(x => x.ValidRom == NesRom.RomType.Valid).Select(x => x.FullpathName);
+            
             if (files.Count() > 0)
             {
+                ProgressReport report = new ProgressReport() { Complete = 0, info = "Copying Files" };
                 try
                 {
+                   
                     Directory.CreateDirectory(tempDir);
+                    int i = 0;
                     foreach (var file in files)
                     {
                         var destFile = Path.Combine(tempDir, Path.GetFileName(file));
                         File.Copy(file, destFile, true);
+                        report.Complete = (i * 100) / files.Count();
+                        Progress.Report(report);
+                        i++;
                     }
-                    Progress.Report(33);
+                    report.Complete = 100;
+                    Progress.Report(report);
+                    report.Complete = 0;
+                    report.info = "Creating archive";
+                    Progress.Report(report);
                     TarFile.CreateFromDirectory(tempDir, tarFileName, false);
-                    FileInfo info = new FileInfo(tarFileName);
-                    Debug.Print("{0}", labelTotalSize.Text);
-                    Debug.Print("Tarfile size: {0}", info.Length);
-                    new TarInspector(tarFileName); 
-                    Progress.Report(66);
+                    report.Complete = 100;
+                    Progress.Report(report);
+                    //FileInfo info = new FileInfo(tarFileName);
+                    //Debug.Print("{0}", labelTotalSize.Text);
+                    //Debug.Print("Tarfile size: {0}", info.Length);
+                    //new TarInspector(tarFileName); 
+                    report.Complete = 0;
+                    report.info = "Uploading to PicoSystem";
+                    Progress.Report(report);
                     // picotool load rom.nes -t bin -o 0x10110000
                     var executable = Path.Combine(appFolder, "PicoTool\\picotool.exe");
                     var process = new Process
@@ -255,6 +292,8 @@ namespace PicoNesLoader
                     };
                     process.Start();
                     string output = string.Empty;
+                    // This is the output
+                    // Loading into Flash: [==============================]  100%
                     while (!process.StandardOutput.EndOfStream)
                     {
                         var line = process.StandardOutput.ReadLine();
@@ -267,7 +306,9 @@ namespace PicoNesLoader
                     {
                         outputOfPicoToolFlash = output;
                     }
-                    
+                    report.Complete = 100;
+                    report.info = "Done";
+
                 }
                 catch (Exception ex)
                 {
@@ -277,9 +318,10 @@ namespace PicoNesLoader
                 {
                     Directory.Delete(tempDir, true);
                     File.Delete(tarFileName);
+                    Progress.Report(report);
                 }
             }
-            Progress.Report(100);
+           
         }
         private void timerCheckPico_Tick(object sender, EventArgs e)
         {
@@ -312,13 +354,28 @@ namespace PicoNesLoader
 
         private void buttonClearAll_Click(object sender, EventArgs e)
         {
-            buttonCreateTar_Click(sender, e);
+            if (romList.Count > 0)
+            {
+                if (MessageBox.Show("Are you sure to clear the entire list?", "Clear list", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    romList.Clear();
+            }
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(new ProcessStartInfo(linkLabel1.Text) { UseShellExecute = true });
-          
+        }
+
+        private void PicoLoader_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (tasksRunning)
+            {
+                if (MessageBox.Show("There are still running tasks. Close anyway?", "Running tasks",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }
