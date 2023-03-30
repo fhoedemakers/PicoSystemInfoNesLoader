@@ -30,8 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.labelTotalSize = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.button_AddRoms = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -53,48 +52,47 @@
             this.toolStripStatusLabelCheckPico = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelLinkToDriver = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.panelButtons = new System.Windows.Forms.Panel();
+            this.labelTotalSize = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+           
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nesRomBindingSource)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.panelButtons.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.labelTotalSize);
-            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            
+            this.groupBox1.Controls.Add(this.linkLabel1);
             this.groupBox1.Location = new System.Drawing.Point(12, 398);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(776, 100);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
             // 
-            // labelTotalSize
+            // linkLabel1
             // 
-            this.labelTotalSize.AutoSize = true;
-            this.labelTotalSize.Location = new System.Drawing.Point(129, 25);
-            this.labelTotalSize.Name = "labelTotalSize";
-            this.labelTotalSize.Size = new System.Drawing.Size(13, 15);
-            this.labelTotalSize.TabIndex = 5;
-            this.labelTotalSize.Text = "0";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(112, 15);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Total size of archive:";
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(1, 80);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(301, 15);
+            this.linkLabel1.TabIndex = 1;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "https://github.com/fhoedemakers/PicoSystem_InfoNes";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // button_AddRoms
             // 
-            this.button_AddRoms.Location = new System.Drawing.Point(12, 338);
+            this.button_AddRoms.Location = new System.Drawing.Point(12, 3);
             this.button_AddRoms.Name = "button_AddRoms";
-            this.button_AddRoms.Size = new System.Drawing.Size(108, 23);
+            this.button_AddRoms.Size = new System.Drawing.Size(142, 23);
             this.button_AddRoms.TabIndex = 2;
             this.button_AddRoms.Text = "Add Rom(s)";
             this.button_AddRoms.UseVisualStyleBackColor = true;
@@ -167,7 +165,7 @@
             // SizeinKBytes
             // 
             this.SizeinKBytes.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.SizeinKBytes.DataPropertyName = "SizeinKBytes";
+            this.SizeinKBytes.DataPropertyName = "SizeInBytes";
             this.SizeinKBytes.HeaderText = "KB";
             this.SizeinKBytes.Name = "SizeinKBytes";
             this.SizeinKBytes.ReadOnly = true;
@@ -221,7 +219,7 @@
             // 
             // buttonDelete
             // 
-            this.buttonDelete.Location = new System.Drawing.Point(126, 338);
+            this.buttonDelete.Location = new System.Drawing.Point(161, 3);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(143, 23);
             this.buttonDelete.TabIndex = 1;
@@ -231,7 +229,7 @@
             // 
             // buttonClearAll
             // 
-            this.buttonClearAll.Location = new System.Drawing.Point(275, 338);
+            this.buttonClearAll.Location = new System.Drawing.Point(310, 3);
             this.buttonClearAll.Name = "buttonClearAll";
             this.buttonClearAll.Size = new System.Drawing.Size(127, 23);
             this.buttonClearAll.TabIndex = 3;
@@ -242,7 +240,7 @@
             // buttonCreateTar
             // 
             this.buttonCreateTar.Enabled = false;
-            this.buttonCreateTar.Location = new System.Drawing.Point(12, 367);
+            this.buttonCreateTar.Location = new System.Drawing.Point(12, 31);
             this.buttonCreateTar.Name = "buttonCreateTar";
             this.buttonCreateTar.Size = new System.Drawing.Size(142, 23);
             this.buttonCreateTar.TabIndex = 4;
@@ -287,19 +285,48 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
             // 
+            // panelButtons
+            // 
+            this.panelButtons.Controls.Add(this.labelTotalSize);
+            this.panelButtons.Controls.Add(this.label1);
+            this.panelButtons.Controls.Add(this.buttonClearAll);
+            this.panelButtons.Controls.Add(this.buttonDelete);
+            this.panelButtons.Controls.Add(this.buttonCreateTar);
+            this.panelButtons.Controls.Add(this.button_AddRoms);
+            this.panelButtons.Location = new System.Drawing.Point(0, 335);
+            this.panelButtons.Name = "panelButtons";
+            this.panelButtons.Size = new System.Drawing.Size(462, 57);
+            this.panelButtons.TabIndex = 6;
+            // 
+            // labelTotalSize
+            // 
+            this.labelTotalSize.AutoSize = true;
+            this.labelTotalSize.Location = new System.Drawing.Point(279, 35);
+            this.labelTotalSize.Name = "labelTotalSize";
+            this.labelTotalSize.Size = new System.Drawing.Size(13, 15);
+            this.labelTotalSize.TabIndex = 7;
+            this.labelTotalSize.Text = "0";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(161, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(112, 15);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Total size of archive:";
+            
+            // 
             // PicoLoader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 526);
+            this.Controls.Add(this.panelButtons);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.buttonCreateTar);
-            this.Controls.Add(this.buttonClearAll);
-            this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.button_AddRoms);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PicoLoader";
             this.Text = "PicoSystem_InfoNes - NES Rom uploader";
@@ -313,6 +340,8 @@
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.panelButtons.ResumeLayout(false);
+            this.panelButtons.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -329,18 +358,11 @@
         private BindingSource nesRomBindingSource;
         private Button button3;
         private Button button_AddRoms;
-        private Label labelTotalSize;
-        private Label label1;
         private OpenFileDialog openFileDialogNES;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem saveToolStripMenuItem;
         private Button buttonDelete;
-        private DataGridViewTextBoxColumn Column1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumnName;
-        private DataGridViewTextBoxColumn SizeinKBytes;
-        private DataGridViewButtonColumn DeleteRow;
         private Button buttonClearAll;
         private Button buttonCreateTar;
         private System.Windows.Forms.Timer timerCheckPico;
@@ -348,5 +370,15 @@
         private ToolStripStatusLabel toolStripStatusLabelCheckPico;
         private ToolStripStatusLabel toolStripStatusLabelLinkToDriver;
         private ToolStripProgressBar toolStripProgressBar1;
+        private Panel panelButtons;
+        private Label labelTotalSize;
+        private Label label1;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumnName;
+        private DataGridViewTextBoxColumn SizeinKBytes;
+        private DataGridViewButtonColumn DeleteRow;
+        private LinkLabel linkLabel1;
+        
     }
 }

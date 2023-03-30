@@ -1,7 +1,9 @@
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Formats.Tar;
 using System.Net.NetworkInformation;
+using System.Security.Policy;
 
 namespace PicoNesLoader
 {
@@ -18,7 +20,7 @@ namespace PicoNesLoader
         const string NoDriverInstalled = "You may need to install a driver.";
         const string BootSelNotEnabled = "No accessible RP2040 devices in BOOTSEL mode were found.";
 
-
+        string infoLabelText = @"This is a helper tool for adding multiple NES roms to the PicoSystem_InfoNes NES emulator running on the Pimoroni PicoSystem handheld.";
         private long totalTarSize;
 
         public string appFolder { get { return Path.GetDirectoryName(Application.ExecutablePath); } }
@@ -60,7 +62,7 @@ namespace PicoNesLoader
             process.Start();
             outputOfPicoTool = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
-            Debug.Print("{0}", process.ExitCode);
+            //Debug.Print("{0}", process.ExitCode);
             if (process.ExitCode != 0)
             {
                 if (outputOfPicoTool.Contains(NoDriverInstalled))
@@ -81,6 +83,7 @@ namespace PicoNesLoader
 
         private void PicoLoader_Load(object sender, EventArgs e)
         {
+            //labelInfo.Text = infoLabelText;
             toolStripStatusLabelLinkToDriver.Visible = false;
             nesRomBindingSource.DataSource = romList;
             CalculateTarSize();
@@ -128,38 +131,58 @@ namespace PicoNesLoader
             }
         }
 
-        private void button_AddRoms_Click(object sender, EventArgs e)
+        private async void button_AddRoms_Click(object sender, EventArgs e)
         {
-            if (openFileDialogNES.ShowDialog() == DialogResult.OK)
+            dataGridView1.DataSource = null;
+            if (openFileDialogNES.ShowDialog() == DialogResult.OK && openFileDialogNES.FileNames.Length > 0)
             {
-                List<NesRom> list = new List<NesRom>();
-                foreach (var file in openFileDialogNES.FileNames)
+                panelButtons.Enabled = false;
+                Progress<int> progress = new Progress<int>( value =>
                 {
-                    list.Add(new NesRom(file));
-                }
-                foreach (var item in romList)
-                {
-                    list.Add((NesRom)item);
-                }
-                var distinctList = list.Distinct();
-                romList.Clear();
-                foreach (var item in distinctList)
-                {
-                    romList.Add((NesRom)item);
-                }
-                dataGridView1.DataSource = null;
+                    toolStripProgressBar1.ProgressBar.Value = value;
+                });
+                await Task.Run(
+                    () =>  UploadFile(progress));
+                
                 dataGridView1.DataSource = romList;
-                dataGridView1.Sort(dataGridView1.Columns["dataGridViewTextBoxColumnName"], ListSortDirection.Ascending);
+               // dataGridView1.Sort(dataGridView1.Columns["dataGridViewTextBoxColumnName"], ListSortDirection.Ascending);
             }
             CalculateTarSize();
+            panelButtons.Enabled = true;
         }
 
+        private void UploadFile(IProgress<int> progress)
+        {
+            List<NesRom> list = new List<NesRom>();
+            int i = 0;
+            foreach (var file in openFileDialogNES.FileNames)
+            {
+                list.Add(new NesRom(file));
+                i++;
+                var complete = (i * 100) / openFileDialogNES.FileNames.Length;
+                progress.Report(complete);
+            }
+            
+            var distinctList = list.Distinct().ToList();
+            distinctList.Sort();
+
+           
+            foreach (var item in distinctList)
+            {
+                romList.Add((NesRom)item);
+            }
+        }
         private void CalculateTarSize()
         {
-            int paxHeaderSize = ((128 + 512 + 511) & ~512);
-            totalTarSize = romList.Where(x => x.ValidRom == NesRom.RomType.Valid).Select(y => ((y.SizeInBytes + 512 + 511) & ~512) + paxHeaderSize).Sum() + 1024;
+            int paxHeaderSize = 1024; 
+            totalTarSize = romList.Where(x => x.ValidRom == NesRom.RomType.Valid).Select(y => ((y.SizeInBytes + 512 + 511) & ~511) + paxHeaderSize).Sum();
+            if (totalTarSize > 0)
+            {
+                totalTarSize += 1024;
+            }
             // labelTotalSize.Text = $"{totalTarSize / 1024 / 1024} MB / {MaxTarSize / 1024 / 1024} MB";
             labelTotalSize.Text = $"{totalTarSize / 1024} KB / {MaxTarSize / 1024} KB";
+            // labelTotalSize.Text = $"{totalTarSize} / {MaxTarSize} ";
             if (totalTarSize > MaxTarSize)
             {
                 labelTotalSize.ForeColor = Color.Red;
@@ -212,9 +235,12 @@ namespace PicoNesLoader
                     }
                     Progress.Report(33);
                     TarFile.CreateFromDirectory(tempDir, tarFileName, false);
-                   
+                    FileInfo info = new FileInfo(tarFileName);
+                    Debug.Print("{0}", labelTotalSize.Text);
+                    Debug.Print("Tarfile size: {0}", info.Length);
+                    new TarInspector(tarFileName); 
                     Progress.Report(66);
-                    // picotool load rom.nes -t bin -o 0x10090000
+                    // picotool load rom.nes -t bin -o 0x10110000
                     var executable = Path.Combine(appFolder, "PicoTool\\picotool.exe");
                     var process = new Process
                     {
@@ -228,7 +254,13 @@ namespace PicoNesLoader
                         }
                     };
                     process.Start();
-                    var output = process.StandardOutput.ReadToEnd();
+                    string output = string.Empty;
+                    while (!process.StandardOutput.EndOfStream)
+                    {
+                        var line = process.StandardOutput.ReadLine();
+                        Debug.Print(line);
+                        output += line;
+                    }
                     process.WaitForExit();
                     Debug.Print("{0}", process.ExitCode);
                     if (process.ExitCode != 0)
@@ -281,6 +313,12 @@ namespace PicoNesLoader
         private void buttonClearAll_Click(object sender, EventArgs e)
         {
             buttonCreateTar_Click(sender, e);
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(linkLabel1.Text) { UseShellExecute = true });
+          
         }
     }
 }

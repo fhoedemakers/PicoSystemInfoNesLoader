@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PicoNesLoader
 {
 
-    public class NesRom : IEquatable<NesRom>
+    public class NesRom : IEquatable<NesRom>, IComparable<NesRom>
     {
         public enum RomType { Valid, NoRom, InvalidMapper };
 
@@ -152,6 +152,14 @@ namespace PicoNesLoader
 
         public long SizeinKBytes { get { return SizeInBytes / 1024; } }
 
+        public long SizeInTar
+        {
+            get
+            {
+                return (SizeInBytes + 512 + 511) & ~511;
+            }
+        }
+
         public RomType ValidRom { get; set; }
 
         public string Name { get; set; }
@@ -201,7 +209,7 @@ namespace PicoNesLoader
 
         }
 
-        public bool Equals(NesRom other)
+        public bool Equals(NesRom? other)
         {
             //Check whether the compared object is null.
             if (Object.ReferenceEquals(other, null)) return false;
@@ -223,6 +231,11 @@ namespace PicoNesLoader
             int hashProductName = FullpathName == null ? 0 : FullpathName.GetHashCode();
             //Calculate the hash code for the product.
             return hashProductName;
+        }
+
+        public int CompareTo(NesRom? other)
+        {
+            return FullpathName.CompareTo(other.FullpathName);
         }
     }
 
