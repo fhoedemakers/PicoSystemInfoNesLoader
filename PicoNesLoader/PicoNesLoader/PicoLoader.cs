@@ -94,6 +94,7 @@ namespace PicoNesLoader
             checkPicoSystem();
             displayPicoStatus();
             timerCheckPico.Enabled = true;
+            toolStripProgressBar1.Visible = false;  
         }
 
         private void displayPicoStatus()
@@ -138,10 +139,12 @@ namespace PicoNesLoader
         private async void button_AddRoms_Click(object sender, EventArgs e)
         {
             timerCheckPico.Enabled = false;
-            dataGridView1.DataSource = null;
+           
             if (openFileDialogNES.ShowDialog() == DialogResult.OK && openFileDialogNES.FileNames.Length > 0)
             {
+                dataGridView1.DataSource = null;
                 panelButtons.Enabled = false;
+                toolStripProgressBar1.Visible = true;
                 toolStripStatusLabelCheckPico.Text = "Loading files.";
                 Progress<int> progress = new Progress<int>(value =>
                 {
@@ -159,10 +162,11 @@ namespace PicoNesLoader
                 tasksRunning = false;
                 dataGridView1.DataSource = romList;
                 // dataGridView1.Sort(dataGridView1.Columns["dataGridViewTextBoxColumnName"], ListSortDirection.Ascending);
+                CalculateTarSize();
+                toolStripStatusLabelCheckPico.Text = "Done.";
+                panelButtons.Enabled = true;
             }
-            CalculateTarSize();
-            toolStripStatusLabelCheckPico.Text = "Done.";
-            panelButtons.Enabled = true;
+           
             timerCheckPico.Enabled = true;
         }
 
@@ -222,6 +226,7 @@ namespace PicoNesLoader
             if (romList.Count > 0)
             {
                 timerCheckPico.Enabled = false;
+                toolStripProgressBar1.Visible = true;
                 Progress<ProgressReport> progress = new Progress<ProgressReport>(value =>
                 {
                     toolStripProgressBar1.ProgressBar.Value = value.Complete;
@@ -248,6 +253,7 @@ namespace PicoNesLoader
             
             if (files.Count() > 0)
             {
+
                 ProgressReport report = new ProgressReport() { Complete = 0, info = "Copying Files" };
                 try
                 {
@@ -325,6 +331,7 @@ namespace PicoNesLoader
         }
         private void timerCheckPico_Tick(object sender, EventArgs e)
         {
+            toolStripProgressBar1.Visible = false;
             timerCheckPico.Enabled = false;
             checkPicoSystem();
             displayPicoStatus();
