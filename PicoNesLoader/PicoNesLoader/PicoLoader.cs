@@ -181,7 +181,7 @@ namespace PicoNesLoader
                 var complete = (i * 100) / openFileDialogNES.FileNames.Length;
                 progress.Report(complete);
             }
-
+           
             var distinctList = list.Distinct().ToList();
             distinctList.Sort();
 
