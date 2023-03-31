@@ -33,7 +33,7 @@
             this.growLabel1 = new PicoNesLoader.GrowLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.button_AddRoms = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBoxList = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,13 +57,26 @@
             this.labelTotalSize = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.linkLabelUpdate = new System.Windows.Forms.LinkLabel();
+            this.labelFlashBinaryEnd = new System.Windows.Forms.Label();
+            this.labelFlashBinaryStart = new System.Windows.Forms.Label();
+            this.labelFlashSize = new System.Windows.Forms.Label();
+            this.labelProgramVersion = new System.Windows.Forms.Label();
+            this.labelProgramName = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.groupBoxList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nesRomBindingSource)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panelButtons.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -72,9 +85,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.growLabel1);
             this.groupBox1.Controls.Add(this.linkLabel1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 398);
+            this.groupBox1.Location = new System.Drawing.Point(12, 430);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(776, 100);
+            this.groupBox1.Size = new System.Drawing.Size(776, 71);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
@@ -82,7 +95,7 @@
             // 
             this.growLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.growLabel1.Location = new System.Drawing.Point(6, 19);
+            this.growLabel1.Location = new System.Drawing.Point(6, 14);
             this.growLabel1.Name = "growLabel1";
             this.growLabel1.Size = new System.Drawing.Size(764, 15);
             this.growLabel1.TabIndex = 2;
@@ -91,7 +104,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(1, 80);
+            this.linkLabel1.Location = new System.Drawing.Point(3, 42);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(301, 15);
             this.linkLabel1.TabIndex = 1;
@@ -105,21 +118,21 @@
             this.button_AddRoms.Name = "button_AddRoms";
             this.button_AddRoms.Size = new System.Drawing.Size(142, 23);
             this.button_AddRoms.TabIndex = 2;
-            this.button_AddRoms.Text = "Add Rom(s)";
+            this.button_AddRoms.Text = "Add Rom(s) to list";
             this.button_AddRoms.UseVisualStyleBackColor = true;
             this.button_AddRoms.Click += new System.EventHandler(this.button_AddRoms_Click);
             // 
-            // groupBox2
+            // groupBoxList
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.dataGridView1);
-            this.groupBox2.Location = new System.Drawing.Point(12, 27);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(776, 305);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Add NES roms to the list below:";
+            this.groupBoxList.Controls.Add(this.dataGridView1);
+            this.groupBoxList.Location = new System.Drawing.Point(12, 27);
+            this.groupBoxList.Name = "groupBoxList";
+            this.groupBoxList.Size = new System.Drawing.Size(776, 233);
+            this.groupBoxList.TabIndex = 1;
+            this.groupBoxList.TabStop = false;
+            this.groupBoxList.Text = "Add NES roms to the list below:";
             // 
             // dataGridView1
             // 
@@ -141,7 +154,7 @@
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowTemplate.Height = 25;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(770, 283);
+            this.dataGridView1.Size = new System.Drawing.Size(770, 211);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
@@ -304,7 +317,7 @@
             this.panelButtons.Controls.Add(this.buttonDelete);
             this.panelButtons.Controls.Add(this.buttonCreateTar);
             this.panelButtons.Controls.Add(this.button_AddRoms);
-            this.panelButtons.Location = new System.Drawing.Point(0, 335);
+            this.panelButtons.Location = new System.Drawing.Point(0, 377);
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(462, 57);
             this.panelButtons.TabIndex = 6;
@@ -329,7 +342,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(478, 339);
+            this.button2.Location = new System.Drawing.Point(479, 380);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 7;
@@ -337,25 +350,154 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.buttonCreateTar_Click);
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.linkLabelUpdate);
+            this.groupBox3.Controls.Add(this.labelFlashBinaryEnd);
+            this.groupBox3.Controls.Add(this.labelFlashBinaryStart);
+            this.groupBox3.Controls.Add(this.labelFlashSize);
+            this.groupBox3.Controls.Add(this.labelProgramVersion);
+            this.groupBox3.Controls.Add(this.labelProgramName);
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Controls.Add(this.label3);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Location = new System.Drawing.Point(15, 266);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(770, 100);
+            this.groupBox3.TabIndex = 1;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "PicoSystem Info";
+            // 
+            // linkLabelUpdate
+            // 
+            this.linkLabelUpdate.AutoSize = true;
+            this.linkLabelUpdate.Location = new System.Drawing.Point(242, 27);
+            this.linkLabelUpdate.Name = "linkLabelUpdate";
+            this.linkLabelUpdate.Size = new System.Drawing.Size(99, 15);
+            this.linkLabelUpdate.TabIndex = 10;
+            this.linkLabelUpdate.TabStop = true;
+            this.linkLabelUpdate.Text = "Update Available!";
+            this.linkLabelUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelUpdate_LinkClicked);
+            // 
+            // labelFlashBinaryEnd
+            // 
+            this.labelFlashBinaryEnd.AutoSize = true;
+            this.labelFlashBinaryEnd.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labelFlashBinaryEnd.Location = new System.Drawing.Point(530, 50);
+            this.labelFlashBinaryEnd.Name = "labelFlashBinaryEnd";
+            this.labelFlashBinaryEnd.Size = new System.Drawing.Size(40, 15);
+            this.labelFlashBinaryEnd.TabIndex = 9;
+            this.labelFlashBinaryEnd.Text = "label7";
+            // 
+            // labelFlashBinaryStart
+            // 
+            this.labelFlashBinaryStart.AutoSize = true;
+            this.labelFlashBinaryStart.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labelFlashBinaryStart.Location = new System.Drawing.Point(530, 27);
+            this.labelFlashBinaryStart.Name = "labelFlashBinaryStart";
+            this.labelFlashBinaryStart.Size = new System.Drawing.Size(40, 15);
+            this.labelFlashBinaryStart.TabIndex = 8;
+            this.labelFlashBinaryStart.Text = "label7";
+            // 
+            // labelFlashSize
+            // 
+            this.labelFlashSize.AutoSize = true;
+            this.labelFlashSize.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labelFlashSize.Location = new System.Drawing.Point(120, 73);
+            this.labelFlashSize.Name = "labelFlashSize";
+            this.labelFlashSize.Size = new System.Drawing.Size(40, 15);
+            this.labelFlashSize.TabIndex = 7;
+            this.labelFlashSize.Text = "label7";
+            // 
+            // labelProgramVersion
+            // 
+            this.labelProgramVersion.AutoSize = true;
+            this.labelProgramVersion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labelProgramVersion.Location = new System.Drawing.Point(120, 50);
+            this.labelProgramVersion.Name = "labelProgramVersion";
+            this.labelProgramVersion.Size = new System.Drawing.Size(40, 15);
+            this.labelProgramVersion.TabIndex = 6;
+            this.labelProgramVersion.Text = "label7";
+            // 
+            // labelProgramName
+            // 
+            this.labelProgramName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labelProgramName.Location = new System.Drawing.Point(120, 27);
+            this.labelProgramName.Name = "labelProgramName";
+            this.labelProgramName.Size = new System.Drawing.Size(126, 15);
+            this.labelProgramName.TabIndex = 5;
+            this.labelProgramName.Text = "PicoSystem_InfoNes";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(425, 50);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(96, 15);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "Flash Binary End:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(425, 27);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(100, 15);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Flash Binary Start:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(10, 73);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(60, 15);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Flash Size:";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 50);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(97, 15);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Program Version:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(10, 27);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(91, 15);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Program Name:";
+            // 
             // PicoLoader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 526);
             this.Controls.Add(this.button2);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.panelButtons);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBoxList);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PicoLoader";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PicoSystem_InfoNes - NES Rom uploader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PicoLoader_FormClosing);
             this.Load += new System.EventHandler(this.PicoLoader_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
+            this.groupBoxList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nesRomBindingSource)).EndInit();
             this.menuStrip1.ResumeLayout(false);
@@ -364,6 +506,8 @@
             this.statusStrip1.PerformLayout();
             this.panelButtons.ResumeLayout(false);
             this.panelButtons.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -372,7 +516,7 @@
         #endregion
 
         private GroupBox groupBox1;
-        private GroupBox groupBox2;
+        private GroupBox groupBoxList;
         private Button button1;
         private DataGridView dataGridView1;
         private DataGridViewTextBoxColumn validRomDataGridViewTextBoxColumn;
@@ -403,5 +547,17 @@
         private LinkLabel linkLabel1;
         private PicoNesLoader.GrowLabel growLabel1;
         private Button button2;
+        private GroupBox groupBox3;
+        private Label label6;
+        private Label label5;
+        private Label label4;
+        private Label label3;
+        private Label label2;
+        private Label labelFlashBinaryEnd;
+        private Label labelFlashBinaryStart;
+        private Label labelFlashSize;
+        private Label labelProgramVersion;
+        private Label labelProgramName;
+        private LinkLabel linkLabelUpdate;
     }
 }
