@@ -267,7 +267,7 @@
             this.buttonCreateTar.Name = "buttonCreateTar";
             this.buttonCreateTar.Size = new System.Drawing.Size(142, 23);
             this.buttonCreateTar.TabIndex = 4;
-            this.buttonCreateTar.Text = "Upload To PicoSystem";
+            this.buttonCreateTar.Text = "Flash To PicoSystem";
             this.buttonCreateTar.UseVisualStyleBackColor = true;
             this.buttonCreateTar.Click += new System.EventHandler(this.buttonCreateTar_Click);
             // 

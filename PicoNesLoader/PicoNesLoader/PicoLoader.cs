@@ -525,7 +525,7 @@ namespace PicoNesLoader
                                                   where asset["name"].Value<string>() == "PicoSystem_InfoNes.uf2"
                                                   select asset["browser_download_url"].Value<string>()).FirstOrDefault();
             string version = release["tag_name"].Value<string>();
-            if (version != picoSystemInfo.ProgramVersion)
+            if (version.CompareTo(picoSystemInfo.ProgramVersion) > 0 || picoSystemInfo.ProgramVersion == "0.1")
             {
                 return true;
             }
