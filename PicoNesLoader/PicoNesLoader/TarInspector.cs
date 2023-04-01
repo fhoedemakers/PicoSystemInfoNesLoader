@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace PicoNesLoader
 {
+    /// <summary>
+    /// Helper class for inspecting tar archives
+    /// Used for debugging purposes.
+    /// </summary>
     internal class TarInspector
     {
         byte[] data;

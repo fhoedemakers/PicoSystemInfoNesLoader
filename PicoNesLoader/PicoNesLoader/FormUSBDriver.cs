@@ -11,6 +11,9 @@ using System.Windows.Forms;
 
 namespace PicoNesLoader
 {
+    /// <summary>
+    /// Install the usb driver needed for the PicoSystem.
+    /// </summary>
     public partial class FormUSBDriver : Form
     {
         public string appFolder { get { return Path.GetDirectoryName(Application.ExecutablePath); } }
@@ -33,7 +36,6 @@ namespace PicoNesLoader
         {
             var driverDir = Path.Combine(appFolder, "driver");
             var executable = Path.Combine(driverDir, "zadig-2.8.exe");
-
             try
             {
                 var process = new Process
@@ -49,7 +51,6 @@ namespace PicoNesLoader
                     }
                 };
                 process.Start();
-                //var output = process.StandardOutput.ReadToEnd();
                 process.WaitForExit();
             }
             catch (Exception ex)

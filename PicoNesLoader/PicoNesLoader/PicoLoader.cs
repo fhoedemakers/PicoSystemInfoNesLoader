@@ -14,33 +14,37 @@ namespace PicoNesLoader
 
     public partial class PicoLoader : Form
     {
+        #region constants
         private const string flashProgramName = "PicoSystem_InfoNes";
         private const long defaultMaxTarSize = 12 * 1024 * 1024;
         private const long defaultFlashStart = 0x10110000;
-        private enum PicoStatus { OK, NoBootSel, NeedDriver, UnknownError };
-
-        bool tasksRunning = false;
-        bool alreadyAsked = false;
-
-        private PicoStatus picoStatus;
-        private string outputOfPicoTool = string.Empty;
-        private string outputOfPicoToolFlash = string.Empty;
-        private long MaxTarSize = defaultMaxTarSize;
         const string NoDriverInstalled = "You may need to install a driver.";
         const string BootSelNotEnabled = "No accessible RP2040 devices in BOOTSEL mode were found.";
+        private const string infoLabelText = @"This is a helper tool for adding multiple NES roms to the PicoSystem_InfoNes NES emulator running on the Pimoroni PicoSystem handheld.";
+        #endregion
 
-        string infoLabelText = @"This is a helper tool for adding multiple NES roms to the PicoSystem_InfoNes NES emulator running on the Pimoroni PicoSystem handheld.";
+        #region fields
+        private long MaxTarSize = defaultMaxTarSize;  // Maximum size of archive containing roms
         private long totalTarSize;
+        private enum PicoSystemStatus { OK, NoBootSel, NeedDriver, UnknownError };
+        private PicoSystemStatus picoSystemStatus;
 
-        public string appFolder { get { return Path.GetDirectoryName(Application.ExecutablePath); } }
-        public SortableBindingList<NesRom> romList = new SortableBindingList<NesRom>();
-
-        RP2040 picoInfo;
+        private bool tasksRunning = false;
+        private bool alreadyAskedForUpdate = false;
+        private string outputOfPicoTool = string.Empty;
+        private string outputOfPicoToolFlash = string.Empty;
+        private SortableBindingList<NesRom> romList = new SortableBindingList<NesRom>();
+        private RP2040 picoSystemInfo;
         private GitHub gh = new GitHub("fhoedemakers", "PicoSystem_InfoNes");
-        private string _tempDir = string.Empty;
         private string latestPicoSystem_InfoNesReleaseUrl;
+        private Progress<ProgressReport> progress;
+        #endregion
 
-        Progress<ProgressReport> progress;
+        #region properties
+        private string _tempDir = string.Empty;
+        /// <summary>
+        /// Get a temporary directoy name
+        /// </summary>
         private string tempDir
         {
             get
@@ -52,116 +56,46 @@ namespace PicoNesLoader
                 return _tempDir;
             }
         }
+
+        /// <summary>
+        /// Get path of PicoTool executable.
+        /// </summary>
+        public string picoTool
+        {
+            get
+            {
+                return Path.Combine(appFolder, "PicoTool\\picotool.exe");
+            }
+        }
+        /// <summary>
+        /// Get location of the folder the executable is in.
+        /// </summary>
+        public string appFolder { 
+            get { 
+                return Path.GetDirectoryName(Application.ExecutablePath); 
+            } 
+        }
+        #endregion
         public PicoLoader()
         {
             InitializeComponent();
 
         }
-        private void checkPicoSystem()
-        {
-
-
-            PicoStatus rval = PicoStatus.OK;
-            var executable = Path.Combine(appFolder, "PicoTool\\picotool.exe");
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = executable,
-                    Arguments = "info -a",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }
-            };
-            process.Start();
-            outputOfPicoTool = process.StandardOutput.ReadToEnd();
-
-            process.WaitForExit();
-            ResetInfoLabels();
-            //Debug.Print("{0}", process.ExitCode);
-            if (process.ExitCode == 0)
-            {
-                var lines = outputOfPicoTool.Split(Environment.NewLine);
-                picoInfo = new RP2040(lines);
-                MaxTarSize = picoInfo.ProgramBinaryStart + picoInfo.FlashSizeBytes - defaultFlashStart + 1;
-                SetInfoLabels();
-
-            }
-            else
-            {
-                if (outputOfPicoTool.Contains(NoDriverInstalled))
-                {
-                    rval = PicoStatus.NeedDriver;
-                }
-                else
-                {
-                    if (outputOfPicoTool.Contains(BootSelNotEnabled))
-                    {
-                        rval = PicoStatus.NoBootSel;
-                    }
-                }
-            }
-            if (picoStatus!=PicoStatus.OK && rval == PicoStatus.OK) {
-                alreadyAsked = false; // Trigger new update check
-            }
-            picoStatus = rval;
-            return;
-        }
-
-        private void SetInfoLabels()
-        {
-            labelProgramName.Text = picoInfo.ProgramName;
-            labelProgramVersion.Text = picoInfo.ProgramVersion;
-            labelFlashSize.Text = $"{picoInfo.FlashSizeInKBytes}K";
-            labelFlashBinaryStart.Text = picoInfo.ProgramBinaryStartHex;
-            labelFlashBinaryEnd.Text = picoInfo.ProgramBinaryEndHex;
-        }
-
+        #region Form Events
         private void PicoLoader_Load(object sender, EventArgs e)
         {
             //labelInfo.Text = infoLabelText;
             linkLabelUpdate.Visible = false;
-            ResetInfoLabels();
+            ResetPicoSystemInfoLabels();
             growLabel1.Text = infoLabelText;
             toolStripStatusLabelLinkToDriver.Visible = false;
             nesRomBindingSource.DataSource = romList;
-            checkPicoSystem();
-            displayPicoStatus();
+            CheckPicoSystemStatus();
+            DisplayPicoStatus();
             CalculateTarSize();
             timerCheckPico.Enabled = true;
             toolStripProgressBar1.Visible = false;
             progress = new Progress<ProgressReport>(ReportProgress);
-        }
-
-
-
-        private void displayPicoStatus()
-        {
-            toolStripStatusLabelLinkToDriver.Visible = false;
-            buttonCreateTar.Enabled = (totalTarSize > 0 && totalTarSize <= MaxTarSize);
-            switch (picoStatus)
-            {
-                case PicoStatus.OK:
-                    toolStripStatusLabelCheckPico.Text = "PicoSystem connected!";
-                    break;
-                case PicoStatus.NoBootSel:
-                    buttonCreateTar.Enabled = false;
-                    linkLabelUpdate.Visible = false;
-                    toolStripStatusLabelCheckPico.Text = "PicoSystem not connected! Please connect device to an USB port, then press X and power on device.";
-                    break;
-                case PicoStatus.NeedDriver:
-                    buttonCreateTar.Enabled = false;
-                    toolStripStatusLabelCheckPico.Text = "Cannot connect to PicoSystem! Please install USB driver!";
-                    toolStripStatusLabelLinkToDriver.Visible = true;
-                    linkLabelUpdate.Visible = false;
-                    break;
-                default:
-                    buttonCreateTar.Enabled = false;
-                    MessageBox.Show(outputOfPicoTool, "PicoSystem", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    linkLabelUpdate.Visible = false;
-                    break;
-            }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -188,7 +122,7 @@ namespace PicoNesLoader
                 panelButtons.Enabled = false;
                 tasksRunning = true;
                 await Task.Run(
-                    () => LoadFiles(progress));
+                    () => LoadFilesIntoGridView(progress));
                 tasksRunning = false;
                 dataGridView1.DataSource = romList;
                 // dataGridView1.Sort(dataGridView1.Columns["dataGridViewTextBoxColumnName"], ListSortDirection.Ascending);
@@ -200,30 +134,159 @@ namespace PicoNesLoader
             timerCheckPico.Enabled = true;
         }
 
-        private void LoadFiles(IProgress<ProgressReport> progress)
+      
+
+        private void buttonDelete_Click(object sender, EventArgs e)
         {
-            ProgressReport report = new ProgressReport() { Complete = 0, info = "Loading files." };
-            List<NesRom> list = new List<NesRom>();
-            int i = 0;
-            list.AddRange(romList);
-            foreach (var file in openFileDialogNES.FileNames)
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
-                list.Add(new NesRom(file));
-                i++;
-                report.Complete = (i * 100) / openFileDialogNES.FileNames.Length;
-                progress.Report(report);
+                dataGridView1.Rows.RemoveAt(row.Index);
+            }
+            CalculateTarSize();
+        }
+
+        private async void buttonCreateTar_Click(object sender, EventArgs e)
+        {
+            var invalidRoms = romList.Count(x => x.ValidRom != NesRom.RomType.Valid);
+            if (romList.Count - invalidRoms > 0)
+            {
+                if (invalidRoms > 0)
+                {
+                    var result = MessageBox.Show("Some roms on the list cannot be run by the emulator and will be skipped.", "Info", MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    if (result != DialogResult.OK)
+                    {
+                        return;
+                    }
+                }
+                groupBoxList.Enabled= false;
+                timerCheckPico.Enabled = false;
+                tasksRunning = true;
+                panelButtons.Enabled = false;
+                await Task.Run(() => CreateArchiveAndFlash(progress));
+                tasksRunning = false;
+                if (!string.IsNullOrEmpty(outputOfPicoToolFlash))
+                {
+                    MessageBox.Show(outputOfPicoToolFlash, "Error flashing PicoSystem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                panelButtons.Enabled = true;
+                timerCheckPico.Enabled = true;
+                groupBoxList.Enabled = true;
             }
 
-            var distinctList = list.Distinct().ToList();
-            distinctList.Sort();
-
-            romList.Clear();
-
-            foreach (var item in distinctList)
+        }
+       
+        /// <summary>
+        /// timer call back for checking wheter a PicoSystem is connected
+        /// Checks also for new updates of the emulator.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void timerCheckPico_Tick(object sender, EventArgs e)
+        {
+            toolStripProgressBar1.Visible = false;
+            timerCheckPico.Enabled = false;
+            CheckPicoSystemStatus();
+            DisplayPicoStatus();
+            CalculateTarSize();
+            // check only once for update
+            if (!alreadyAskedForUpdate && picoSystemStatus == PicoSystemStatus.OK)
             {
-                romList.Add((NesRom)item);
+                try
+                {
+                    alreadyAskedForUpdate = true;
+                    linkLabelUpdate.Visible = await IsUpdateAvailableForEmulatorAsync();
+                    if (picoSystemInfo.ProgramName != flashProgramName)
+                    {
+                        await AskforFlashNewUf2Async();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Cannot connect to GitHub: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            timerCheckPico.Enabled = true;
+
+        }
+       
+        private void toolStripStatusLabelLinkToDriver_Click(object sender, EventArgs e)
+        {
+            timerCheckPico.Enabled = false;
+            FormUSBDriver driverForm = new FormUSBDriver();
+            driverForm.ShowDialog();
+            timerCheckPico.Enabled = true;
+        }
+
+        private void buttonClearAll_Click(object sender, EventArgs e)
+        {
+            if (romList.Count > 0)
+            {
+                if (MessageBox.Show("Are you sure to clear the entire list?", "Clear list", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    romList.Clear();
             }
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(linkLabel1.Text) { UseShellExecute = true });
+        }
+
+        private void PicoLoader_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (tasksRunning)
+            {
+                if (MessageBox.Show("There are still running tasks. Close anyway?", "Running tasks",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private async void linkLabelUpdate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            timerCheckPico.Enabled = false;
+            try
+            {
+                if (await AskforFlashNewUf2Async())
+                {
+                    linkLabelUpdate.Visible = false;
+                };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Cannot connect to GitHub: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            timerCheckPico.Enabled = true;
+        }
+        #endregion
+
+        #region private functions
+        /// <summary>
+        /// Download a file from a given url
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="pathToSave">Filename to save</param>
+        /// <returns></returns>
+        public async Task DownloadFileAsync(string url, string pathToSave)
+        {
+            File.Delete(pathToSave);
+            HttpClient downloadClient = new HttpClient();
+            var httpResult = await downloadClient.GetAsync(url);
+            using (var resultStream = await httpResult.Content.ReadAsStreamAsync())
+            {
+                using (var fileStream = System.IO.File.Create(pathToSave))
+                {
+                    resultStream.CopyTo(fileStream);
+                }
+            }
+        }
+        /// <summary>
+        /// Calculates the size of the archive to be created, 
+        /// based on  the valid .nes entries in the gridview. The size cannot exceed the available flashe memory
+        /// of the PicoSystem.
+        /// </summary>
         private void CalculateTarSize()
         {
             int paxHeaderSize = 1024;
@@ -244,49 +307,69 @@ namespace PicoNesLoader
                 labelTotalSize.ForeColor = Color.Black;
             }
         }
-
-        private void buttonDelete_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Checks whether the PicoSystem is connected to the computer, and
+        /// whether a driver install is needed.
+        /// When connected, the object picoSystemInfo will contain info about the
+        /// system.
+        /// </summary>
+        private void CheckPicoSystemStatus()
         {
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            PicoSystemStatus rval = PicoSystemStatus.OK;
+
+            var process = new Process
             {
-                dataGridView1.Rows.RemoveAt(row.Index);
-            }
-            CalculateTarSize();
-        }
-
-
-        private async void buttonCreateTar_Click(object sender, EventArgs e)
-        {
-            var invalidRoms = romList.Count(x => x.ValidRom != NesRom.RomType.Valid);
-
-            if (romList.Count - invalidRoms > 0)
-            {
-                if (invalidRoms > 0)
+                StartInfo = new ProcessStartInfo
                 {
-                    var result = MessageBox.Show("Roms the emulator cannot run will be skipped.", "Info", MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-                    if (result != DialogResult.OK)
+                    FileName = picoTool,
+                    Arguments = "info -a",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            process.Start();
+            outputOfPicoTool = process.StandardOutput.ReadToEnd();
+
+            process.WaitForExit();
+            ResetPicoSystemInfoLabels();
+            //Debug.Print("{0}", process.ExitCode);
+            if (process.ExitCode == 0)
+            {
+                var lines = outputOfPicoTool.Split(Environment.NewLine);
+                picoSystemInfo = new RP2040(lines);
+                MaxTarSize = picoSystemInfo.ProgramBinaryStart + picoSystemInfo.FlashSizeBytes - defaultFlashStart + 1;
+                SetPicoSystemInfoLabels();
+
+            }
+            else
+            {
+                if (outputOfPicoTool.Contains(NoDriverInstalled))
+                {
+                    rval = PicoSystemStatus.NeedDriver;
+                }
+                else
+                {
+                    if (outputOfPicoTool.Contains(BootSelNotEnabled))
                     {
-                        return;
+                        rval = PicoSystemStatus.NoBootSel;
                     }
                 }
-                groupBoxList.Enabled= false;
-                timerCheckPico.Enabled = false;
-                tasksRunning = true;
-                panelButtons.Enabled = false;
-                await Task.Run(() => ProcessToPicoSystem(progress));
-                tasksRunning = false;
-                if (!string.IsNullOrEmpty(outputOfPicoToolFlash))
-                {
-                    MessageBox.Show(outputOfPicoToolFlash, "Error flashing PicoSystem", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                panelButtons.Enabled = true;
-                timerCheckPico.Enabled = true;
-                groupBoxList.Enabled = true;
             }
-
+            if (picoSystemStatus != PicoSystemStatus.OK && rval == PicoSystemStatus.OK)
+            {
+                alreadyAskedForUpdate = false; // Trigger new update check
+            }
+            picoSystemStatus = rval;
+            return;
         }
 
-        private void ProcessToPicoSystem(IProgress<ProgressReport> progress)
+        /// <summary>
+        /// Create a tar archive containing .nes roms.
+        /// This archive will be flashed to the PicoSystem
+        /// </summary>
+        /// <param name="progress"></param>
+        private void CreateArchiveAndFlash(IProgress<ProgressReport> progress)
         {
             outputOfPicoToolFlash = string.Empty;
             var tarFileName = GetTemporaryFileName(".tar");
@@ -339,35 +422,41 @@ namespace PicoNesLoader
             }
 
         }
-        private async void timerCheckPico_Tick(object sender, EventArgs e)
+        /// <summary>
+        /// Displays the status of the connected PicoSystem on the toolstrip
+        /// </summary>
+        private void DisplayPicoStatus()
         {
-            toolStripProgressBar1.Visible = false;
-            timerCheckPico.Enabled = false;
-            checkPicoSystem();
-            displayPicoStatus();
-            CalculateTarSize();
-
-            if (!alreadyAsked && picoStatus == PicoStatus.OK)
+            toolStripStatusLabelLinkToDriver.Visible = false;
+            buttonCreateTar.Enabled = (totalTarSize > 0 && totalTarSize <= MaxTarSize);
+            switch (picoSystemStatus)
             {
-                try
-                {
-                    alreadyAsked = true;
-                    linkLabelUpdate.Visible = await isUpdateAvailableAsync();
-                    if (picoInfo.ProgramName != flashProgramName)
-                    {
-                        await FlashNewUf2ToPico();
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Cannot connect to GitHub: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                case PicoSystemStatus.OK:
+                    toolStripStatusLabelCheckPico.Text = "PicoSystem connected!";
+                    break;
+                case PicoSystemStatus.NoBootSel:
+                    buttonCreateTar.Enabled = false;
+                    linkLabelUpdate.Visible = false;
+                    toolStripStatusLabelCheckPico.Text = "PicoSystem not connected! Please connect device to an USB port, then press X and power on device.";
+                    break;
+                case PicoSystemStatus.NeedDriver:
+                    buttonCreateTar.Enabled = false;
+                    toolStripStatusLabelCheckPico.Text = "Cannot connect to PicoSystem! Please install USB driver!";
+                    toolStripStatusLabelLinkToDriver.Visible = true;
+                    linkLabelUpdate.Visible = false;
+                    break;
+                default:
+                    buttonCreateTar.Enabled = false;
+                    MessageBox.Show(outputOfPicoTool, "PicoSystem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    linkLabelUpdate.Visible = false;
+                    break;
             }
-            timerCheckPico.Enabled = true;
-
         }
-        private async Task<bool> FlashNewUf2ToPico()
+        /// <summary>
+        /// Asks user to update the PicoSystem with a new version of the emulator
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> AskforFlashNewUf2Async()
         {
             var result = MessageBox.Show("Install InfoNes emulator on Pimoroni PicoSystem?", "PicoSystem_InfoNes not installed.", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
             if (result == DialogResult.Yes)
@@ -379,9 +468,15 @@ namespace PicoNesLoader
                 tasksRunning = false;
                 linkLabelUpdate.Visible = false;
                 return true;
-            } else { return false; }
+            }
+            else { return false; }
         }
 
+        /// <summary>
+        /// Download and flash the emulator to the PicoSystem.
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <returns></returns>
         private async Task FlashUf2ToPicoSystemAsync(IProgress<ProgressReport> progress)
         {
             ProgressReport report = new ProgressReport() { Complete = 0, info = "Downloading .uf2" };
@@ -390,110 +485,87 @@ namespace PicoNesLoader
             await DownloadFileAsync(latestPicoSystem_InfoNesReleaseUrl, filename);
             await Task.Run(() =>
             {
-                PicoFlash(filename, "uf2", picoInfo.ProgramBinaryStart, progress);
+                PicoFlash(filename, "uf2", picoSystemInfo.ProgramBinaryStart, progress);
             });
             if (!string.IsNullOrEmpty(outputOfPicoToolFlash))
             {
                 MessageBox.Show(outputOfPicoToolFlash, "Error flashing PicoSystem",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-
         }
-
-
-        private void toolStripStatusLabelLinkToDriver_Click(object sender, EventArgs e)
-        {
-            timerCheckPico.Enabled = false;
-            FormUSBDriver driverForm = new FormUSBDriver();
-            driverForm.ShowDialog();
-            timerCheckPico.Enabled = true;
-        }
-
+        /// <summary>
+        /// Get a name for a temporary directory
+        /// </summary>
+        /// <returns></returns>
         public string GetTemporaryDirectoryName()
         {
             string tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             return tempDirectory;
         }
 
+        /// <summary>
+        /// Get a name for a temporary filename with the given extension.
+        /// </summary>
+        /// <param name="extension"></param>
+        /// <returns></returns>
         public string GetTemporaryFileName(string extension)
         {
-            string filename = Path.Combine(Path.GetTempPath(), $"{Path.GetFileNameWithoutExtension(Path.GetRandomFileName())}.tar");
+            string filename = Path.Combine(Path.GetTempPath(), $"{Path.GetFileNameWithoutExtension(Path.GetRandomFileName())}{extension}");
             return filename;
         }
 
-        private void buttonClearAll_Click(object sender, EventArgs e)
-        {
-            if (romList.Count > 0)
-            {
-                if (MessageBox.Show("Are you sure to clear the entire list?", "Clear list", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                    romList.Clear();
-            }
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo(linkLabel1.Text) { UseShellExecute = true });
-        }
-
-        private void PicoLoader_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (tasksRunning)
-            {
-                if (MessageBox.Show("There are still running tasks. Close anyway?", "Running tasks",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-                {
-                    e.Cancel = true;
-                }
-            }
-        }
-
-        private void ResetInfoLabels()
-        {
-            labelProgramName.Text =
-                labelProgramVersion.Text =
-                labelFlashSize.Text =
-                labelFlashBinaryStart.Text =
-                labelFlashBinaryEnd.Text = "N/A";
-            MaxTarSize = defaultMaxTarSize;
-        }
-
-        private async Task<bool> isUpdateAvailableAsync()
+        /// <summary>
+        /// Check whether a new Version of the emulator is available on GitHub
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> IsUpdateAvailableForEmulatorAsync()
         {
             JObject release = await gh.GetLatestReleaseAsync();
-
             latestPicoSystem_InfoNesReleaseUrl = (from asset in release["assets"]
                                                   where asset["name"].Value<string>() == "PicoSystem_InfoNes.uf2"
                                                   select asset["browser_download_url"].Value<string>()).FirstOrDefault();
             string version = release["tag_name"].Value<string>();
-            if (version != picoInfo.ProgramVersion)
+            if (version != picoSystemInfo.ProgramVersion)
             {
                 return true;
             }
             return false;
         }
-
-        void ReportProgress(ProgressReport value)
+        /// <summary>
+        /// Loads the gridview with the information of the selected .nes roms from the open file dialog.
+        /// </summary>
+        /// <param name="progress"></param>
+        private void LoadFilesIntoGridView(IProgress<ProgressReport> progress)
         {
-            toolStripProgressBar1.Visible = true;
-            toolStripProgressBar1.ProgressBar.Value = value.Complete;
-            toolStripStatusLabelCheckPico.Text = value.info;
-        }
-
-        public async Task DownloadFileAsync(string url, string pathToSave)
-        {
-            File.Delete(pathToSave);
-            HttpClient downloadClient = new HttpClient();
-            var httpResult = await downloadClient.GetAsync(url);
-            using (var resultStream = await httpResult.Content.ReadAsStreamAsync())
+            ProgressReport report = new ProgressReport() { Complete = 0, info = "Loading files." };
+            List<NesRom> list = new List<NesRom>();
+            int i = 0;
+            list.AddRange(romList);
+            foreach (var file in openFileDialogNES.FileNames)
             {
-                using (var fileStream = System.IO.File.Create(pathToSave))
-                {
-                    resultStream.CopyTo(fileStream);
-                }
+                list.Add(new NesRom(file));
+                i++;
+                report.Complete = (i * 100) / openFileDialogNES.FileNames.Length;
+                progress.Report(report);
+            }
+            // remove duplicates
+            var distinctList = list.Distinct().ToList();
+            distinctList.Sort();
+
+            romList.Clear();
+
+            foreach (var item in distinctList)
+            {
+                romList.Add((NesRom)item);
             }
         }
-
+        /// <summary>
+        /// Flash a file to the PicoSystem using PicoTool.exe
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="binaryType">bin, uf2</param>
+        /// <param name="address"></param>
+        /// <param name="progress"></param>
         public void PicoFlash(string filename, string binaryType, long address, IProgress<ProgressReport> progress)
         {
             outputOfPicoToolFlash = string.Empty;
@@ -502,7 +574,6 @@ namespace PicoNesLoader
             report.info = "Uploading to PicoSystem";
             progress.Report(report);
             // picotool load rom.nes -t bin -o 0x10110000
-            var executable = Path.Combine(appFolder, "PicoTool\\picotool.exe");
             string offsetArg = string.Empty;
             if (binaryType == "bin")
             {
@@ -512,7 +583,7 @@ namespace PicoNesLoader
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = executable,
+                    FileName = picoTool,
                     Arguments = $"load {filename} -t {binaryType}{offsetArg}",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -523,9 +594,9 @@ namespace PicoNesLoader
             string output = string.Empty;
             // This is the output
             // Loading into Flash: [==============================]  100%
+            // Get the precentages from stdout and report back.
             while (!process.StandardOutput.EndOfStream)
             {
-
                 var line = process.StandardOutput.ReadLine();
                 try
                 {
@@ -549,23 +620,41 @@ namespace PicoNesLoader
             report.Complete = 100;
             progress.Report(report);
         }
-
-        private async void linkLabelUpdate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        /// <summary>
+        /// Report Progress of an async task.
+        /// </summary>
+        /// <param name="value"></param>
+        void ReportProgress(ProgressReport value)
         {
-            timerCheckPico.Enabled = false;
-            try
-            {
-                if (await FlashNewUf2ToPico())
-                {
-                    linkLabelUpdate.Visible = false;
-                };
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Cannot connect to GitHub: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            timerCheckPico.Enabled = true;
+            toolStripProgressBar1.Visible = true;
+            toolStripProgressBar1.ProgressBar.Value = value.Complete;
+            toolStripStatusLabelCheckPico.Text = value.info;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ResetPicoSystemInfoLabels()
+        {
+            labelProgramName.Text =
+                labelProgramVersion.Text =
+                labelFlashSize.Text =
+                labelFlashBinaryStart.Text =
+                labelFlashBinaryEnd.Text = "N/A";
+            MaxTarSize = defaultMaxTarSize;
+        }
+        /// <summary>
+        /// Set info labels text with info from the picoSystemInfo object
+        /// </summary>
+        private void SetPicoSystemInfoLabels()
+        {
+            labelProgramName.Text = picoSystemInfo.ProgramName;
+            labelProgramVersion.Text = picoSystemInfo.ProgramVersion;
+            labelFlashSize.Text = $"{picoSystemInfo.FlashSizeInKBytes}K";
+            labelFlashBinaryStart.Text = picoSystemInfo.ProgramBinaryStartHex;
+            labelFlashBinaryEnd.Text = picoSystemInfo.ProgramBinaryEndHex;
+        }
+       
+        #endregion
     }
 
 

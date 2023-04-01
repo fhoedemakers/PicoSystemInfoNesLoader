@@ -12,10 +12,18 @@ using static System.Net.WebRequestMethods;
 
 namespace PicoNesLoader
 {
+    /// <summary>
+    /// Class for accessing the GitHub API
+    /// </summary>
     public class GitHub
     {
-        static HttpClient _httpClient = null;
+       
         private string ApiToken = "";
+        #region properties
+        public string Owner { get; }
+        public string Repo { get; }
+
+        private static HttpClient _httpClient = null;
         private HttpClient Client
         {
             get { 
@@ -34,23 +42,20 @@ namespace PicoNesLoader
                         _httpClient.DefaultRequestHeaders.Authorization =new AuthenticationHeaderValue("token", ApiToken);
                     
                     }
-                }   
-                
+                }                 
                 return _httpClient; 
             }
-
         }
+        #endregion
 
+        #region methods
         public async Task<JObject> GetLatestReleaseAsync()
         {
             var request = $"/repos/{Owner}/{Repo}/releases/latest";
             var str = await Client.GetStringAsync(request);
             return JObject.Parse(str);    
         }
-
-       
-        public string Owner { get; }
-        public string Repo { get; }
+        #endregion
 
         public GitHub(string owner, string repo)
         {

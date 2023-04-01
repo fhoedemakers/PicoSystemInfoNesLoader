@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PicoNesLoader
 {
+    /// <summary>
+    /// Object that contains properties of a connected Pico
+    /// </summary>
     internal class RP2040
     {
         public string ProgramName { get; set; }
@@ -19,6 +22,10 @@ namespace PicoNesLoader
         public long FlashSizeInKBytes  { get; set; }
         public long FlashSizeBytes { get; set; }
 
+        /// <summary>
+        /// Constructor 
+        /// </summary>
+        /// <param name="info">Output of Picotool info -a</param>
         public RP2040(string[] info)
         {
             ProgramName= (info[1].Split(":")[1]).Trim();

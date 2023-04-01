@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace PicoNesLoader
 {
-
+    /// <summary>
+    /// Object that describes a .nes rom.
+    /// </summary>
     public class NesRom : IEquatable<NesRom>, IComparable<NesRom>
     {
         public enum RomType { Valid, NoRom, InvalidMapper };
 
+        // Mappers supported by the InfoNes emulator
         private readonly int[] ValidMappers = {0,
         1,
         2,
@@ -165,16 +168,19 @@ namespace PicoNesLoader
         public string Name { get; set; }
 
         public string FullpathName { get; set; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="fileName">Path to a .nes rom</param>
         public NesRom(string fileName)
         {
             ValidRom = RomType.NoRom;
             Name = Path.GetFileName(fileName);
             FullpathName = fileName;
-
-
-            // = File.ReadAllBytes(fileName);
             FileInfo fi = new FileInfo(fileName);
             SizeInBytes = fi.Length;
+            // read first bytes for examining the rom header
             byte[] RomHeader = new byte[7];
             if (SizeInBytes > RomHeader.Length)
             {
@@ -204,11 +210,16 @@ namespace PicoNesLoader
 
             }
         }
+        /// <summary>
+        /// default constructor
+        /// </summary>
         public NesRom()
         {
 
         }
 
+
+        #region sort and distinct helpers
         public bool Equals(NesRom? other)
         {
             //Check whether the compared object is null.
@@ -221,22 +232,18 @@ namespace PicoNesLoader
             return FullpathName.Equals(other.FullpathName);
         }
 
-        // If Equals() returns true for a pair of objects
-        // then GetHashCode() must return the same value for these objects.
-
         public override int GetHashCode()
         {
-
-            //Get hash code for the Name field if it is not null.
-            int hashProductName = FullpathName == null ? 0 : FullpathName.GetHashCode();
-            //Calculate the hash code for the product.
-            return hashProductName;
+            int hashFullPath = FullpathName == null ? 0 : FullpathName.GetHashCode();
+            return hashFullPath;
         }
 
         public int CompareTo(NesRom? other)
         {
             return FullpathName.CompareTo(other.FullpathName);
         }
+
+        #endregion
     }
 
 }

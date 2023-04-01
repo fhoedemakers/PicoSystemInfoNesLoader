@@ -56,7 +56,6 @@
             this.panelButtons = new System.Windows.Forms.Panel();
             this.labelTotalSize = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.linkLabelUpdate = new System.Windows.Forms.LinkLabel();
             this.labelFlashBinaryEnd = new System.Windows.Forms.Label();
@@ -189,7 +188,7 @@
             // SizeinKBytes
             // 
             this.SizeinKBytes.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.SizeinKBytes.DataPropertyName = "SizeInBytes";
+            this.SizeinKBytes.DataPropertyName = "SizeinKBytes";
             this.SizeinKBytes.HeaderText = "KB";
             this.SizeinKBytes.Name = "SizeinKBytes";
             this.SizeinKBytes.ReadOnly = true;
@@ -325,7 +324,7 @@
             // labelTotalSize
             // 
             this.labelTotalSize.AutoSize = true;
-            this.labelTotalSize.Location = new System.Drawing.Point(279, 35);
+            this.labelTotalSize.Location = new System.Drawing.Point(305, 35);
             this.labelTotalSize.Name = "labelTotalSize";
             this.labelTotalSize.Size = new System.Drawing.Size(13, 15);
             this.labelTotalSize.TabIndex = 7;
@@ -336,19 +335,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(161, 35);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(112, 15);
+            this.label1.Size = new System.Drawing.Size(143, 15);
             this.label1.TabIndex = 6;
-            this.label1.Text = "Total size of archive:";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(479, 380);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.buttonCreateTar_Click);
+            this.label1.Text = "Total size of roms to flash:";
             // 
             // groupBox3
             // 
@@ -482,7 +471,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 526);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.panelButtons);
             this.Controls.Add(this.statusStrip1);
@@ -539,14 +527,8 @@
         private Panel panelButtons;
         private Label labelTotalSize;
         private Label label1;
-        private DataGridViewTextBoxColumn Column1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumnName;
-        private DataGridViewTextBoxColumn SizeinKBytes;
-        private DataGridViewButtonColumn DeleteRow;
         private LinkLabel linkLabel1;
         private PicoNesLoader.GrowLabel growLabel1;
-        private Button button2;
         private GroupBox groupBox3;
         private Label label6;
         private Label label5;
@@ -559,5 +541,10 @@
         private Label labelProgramVersion;
         private Label labelProgramName;
         private LinkLabel linkLabelUpdate;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumnName;
+        private DataGridViewTextBoxColumn SizeinKBytes;
+        private DataGridViewButtonColumn DeleteRow;
     }
 }

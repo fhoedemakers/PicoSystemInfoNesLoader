@@ -3,6 +3,10 @@ using System.Drawing;
 using System.Windows.Forms;
 
 namespace PicoNesLoader {
+    /// <summary>
+    /// Class for a GrowLabel. 
+    /// Grows and wraps text when size, text or font changes.
+    /// </summary>
     public class GrowLabel : Label
     {
         private bool mGrowing;
