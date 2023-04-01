@@ -8,3 +8,11 @@ It is also possible to flash a new version of the Emulator to the PicoSystem.
 
 
 ![Screenshot](https://github.com/fhoedemakers/PicoSystemInfoNesLoader/blob/master/assets/Screen.png)
+
+## Driver installation
+
+In order for the app to communicate with the PicoSystem an USB driver is needed. The app can detect whether the driver needs to be installed. The driver then can be installed from within the application. Installation can take some time.
+
+![Screenshot driver needed](https://github.com/fhoedemakers/PicoSystemInfoNesLoader/blob/master/assets/ScreenDriverNeeded.png)
+
+![Screenshot driver install](https://github.com/fhoedemakers/PicoSystemInfoNesLoader/blob/master/assets/ScreenInstallDriver.png)
