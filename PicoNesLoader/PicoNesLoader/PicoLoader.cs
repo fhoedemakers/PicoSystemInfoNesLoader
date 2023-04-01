@@ -571,7 +571,7 @@ namespace PicoNesLoader
             outputOfPicoToolFlash = string.Empty;
             ProgressReport report = new ProgressReport();
             report.Complete = 0;
-            report.info = "Uploading to PicoSystem";
+            report.info = "Flashing PicoSystem";
             progress.Report(report);
             // picotool load rom.nes -t bin -o 0x10110000
             string offsetArg = string.Empty;
