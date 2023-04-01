@@ -7,3 +7,4 @@ Because there is no SD card available, this application lets the user choose NES
 It is also possible to flash a new version of the Emulator to the PicoSystem.
 
 
+![Screenshot](https://github.com/fhoedemakers/PicoSystemInfoNesLoader/blob/master/assets/Screen.png)
