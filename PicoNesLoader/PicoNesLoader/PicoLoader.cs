@@ -15,6 +15,7 @@ namespace PicoNesLoader
     public partial class PicoLoader : Form
     {
         #region constants
+        private const string programVersion = "v0.1-alpha";
         private const string flashProgramName = "PicoSystem_InfoNes";
         private const long defaultMaxTarSize = 12 * 1024 * 1024;
         private const long defaultFlashStart = 0x10110000;
@@ -84,7 +85,7 @@ namespace PicoNesLoader
         #region Form Events
         private void PicoLoader_Load(object sender, EventArgs e)
         {
-            //labelInfo.Text = infoLabelText;
+            labelAppVersion.Text = programVersion;
             linkLabelUpdate.Visible = false;
             ResetPicoSystemInfoLabels();
             growLabel1.Text = infoLabelText;

@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.labelAppVersion = new System.Windows.Forms.Label();
             this.growLabel1 = new PicoNesLoader.GrowLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.button_AddRoms = new System.Windows.Forms.Button();
@@ -82,6 +83,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.labelAppVersion);
             this.groupBox1.Controls.Add(this.growLabel1);
             this.groupBox1.Controls.Add(this.linkLabel1);
             this.groupBox1.Location = new System.Drawing.Point(12, 430);
@@ -89,6 +91,16 @@
             this.groupBox1.Size = new System.Drawing.Size(776, 71);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // labelAppVersion
+            // 
+            this.labelAppVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelAppVersion.AutoSize = true;
+            this.labelAppVersion.Location = new System.Drawing.Point(700, 53);
+            this.labelAppVersion.Name = "labelAppVersion";
+            this.labelAppVersion.Size = new System.Drawing.Size(70, 15);
+            this.labelAppVersion.TabIndex = 3;
+            this.labelAppVersion.Text = "labelVersion";
             // 
             // growLabel1
             // 
@@ -546,5 +558,6 @@
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumnName;
         private DataGridViewTextBoxColumn SizeinKBytes;
         private DataGridViewButtonColumn DeleteRow;
+        private Label labelAppVersion;
     }
 }
