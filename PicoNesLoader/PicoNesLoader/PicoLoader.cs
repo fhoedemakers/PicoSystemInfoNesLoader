@@ -19,7 +19,7 @@ namespace PicoNesLoader
         private const string flashProgramName = "PicoSystem_InfoNes";
         private const long defaultMaxTarSize = 12 * 1024 * 1024;
         private const long defaultFlashStart = 0x10110000;
-        const string NoDriverInstalled = "You may need to install a driver.";
+        const string NoDriverInstalled = "You may need to install the USB driver.";
         const string BootSelNotEnabled = "No accessible RP2040 devices in BOOTSEL mode were found.";
         private const string infoLabelText = @"This is a helper tool for adding multiple NES roms to the PicoSystem_InfoNes NES emulator running on the Pimoroni PicoSystem handheld.";
         #endregion
