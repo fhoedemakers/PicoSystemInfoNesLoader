@@ -96,7 +96,7 @@
             // 
             this.labelAppVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelAppVersion.AutoSize = true;
-            this.labelAppVersion.Location = new System.Drawing.Point(700, 53);
+            this.labelAppVersion.Location = new System.Drawing.Point(704, 53);
             this.labelAppVersion.Name = "labelAppVersion";
             this.labelAppVersion.Size = new System.Drawing.Size(70, 15);
             this.labelAppVersion.TabIndex = 3;

@@ -37,7 +37,7 @@ namespace PicoNesLoader
         private SortableBindingList<NesRom> romList = new SortableBindingList<NesRom>();
         private RP2040 picoSystemInfo;
         private GitHub gh = new GitHub("fhoedemakers", "PicoSystem_InfoNes");
-        private string latestPicoSystem_InfoNesReleaseUrl;
+        private string? latestPicoSystem_InfoNesReleaseUrl;
         private Progress<ProgressReport> progress;
         #endregion
 
@@ -101,7 +101,7 @@ namespace PicoNesLoader
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Close();
+            this?.Close();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -117,7 +117,7 @@ namespace PicoNesLoader
         {
             timerCheckPico.Enabled = false;
 
-            if (openFileDialogNES.ShowDialog() == DialogResult.OK && openFileDialogNES.FileNames.Length > 0)
+            if (openFileDialogNES?.ShowDialog() == DialogResult.OK && openFileDialogNES.FileNames.Length > 0)
             {
                 dataGridView1.DataSource = null;
                 panelButtons.Enabled = false;
@@ -215,7 +215,7 @@ namespace PicoNesLoader
         {
             timerCheckPico.Enabled = false;
             FormUSBDriver driverForm = new FormUSBDriver();
-            driverForm.ShowDialog();
+            driverForm?.ShowDialog();
             timerCheckPico.Enabled = true;
         }
 
@@ -224,7 +224,7 @@ namespace PicoNesLoader
             if (romList.Count > 0)
             {
                 if (MessageBox.Show("Are you sure to clear the entire list?", "Clear list", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                    romList.Clear();
+                    romList?.Clear();
             }
         }
 
@@ -279,7 +279,7 @@ namespace PicoNesLoader
             {
                 using (var fileStream = System.IO.File.Create(pathToSave))
                 {
-                    resultStream.CopyTo(fileStream);
+                    resultStream?.CopyTo(fileStream);
                 }
             }
         }
@@ -377,7 +377,7 @@ namespace PicoNesLoader
 
             var files = romList.Where(x => x.ValidRom == NesRom.RomType.Valid).Select(x => x.FullpathName);
 
-            if (files.Count() > 0)
+            if (files?.Count() > 0)
             {
                 ProgressReport report = new ProgressReport() { Complete = 0, info = "Copying Files" };
                 try
@@ -390,7 +390,7 @@ namespace PicoNesLoader
                         var destFile = Path.Combine(tempDir, Path.GetFileName(file));
                         File.Copy(file, destFile, true);
                         report.Complete = (i * 100) / files.Count();
-                        progress.Report(report);
+                        progress?.Report(report);
                         i++;
                     }
                     report.Complete = 100;
@@ -418,7 +418,7 @@ namespace PicoNesLoader
                 {
                     Directory.Delete(tempDir, true);
                     File.Delete(tarFileName);
-                    progress.Report(report);
+                    progress?.Report(report);
                 }
             }
 
@@ -522,11 +522,11 @@ namespace PicoNesLoader
         private async Task<bool> IsUpdateAvailableForEmulatorAsync()
         {
             JObject release = await gh.GetLatestReleaseAsync();
-            latestPicoSystem_InfoNesReleaseUrl = (from asset in release["assets"]
-                                                  where asset["name"].Value<string>() == "picosystem_infones.uf2"
-                                                  select asset["browser_download_url"].Value<string>()).FirstOrDefault();
-            string version = release["tag_name"].Value<string>();
-            if (version.CompareTo(picoSystemInfo.ProgramVersion) > 0 || picoSystemInfo.ProgramVersion == "0.1")
+            latestPicoSystem_InfoNesReleaseUrl = (from asset in release?["assets"]
+                                                  where asset?["name"]?.Value<string>() == $"{flashProgramName?.ToLower()}.uf2"
+                                                  select asset?["browser_download_url"]?.Value<string>())?.FirstOrDefault();
+            string? version = release?["tag_name"]?.Value<string>();
+            if (version?.CompareTo(picoSystemInfo.ProgramVersion) > 0 || picoSystemInfo.ProgramVersion == "0.1")
             {
                 return true;
             }
@@ -544,10 +544,10 @@ namespace PicoNesLoader
             list.AddRange(romList);
             foreach (var file in openFileDialogNES.FileNames)
             {
-                list.Add(new NesRom(file));
+                list?.Add(new NesRom(file));
                 i++;
                 report.Complete = (i * 100) / openFileDialogNES.FileNames.Length;
-                progress.Report(report);
+                progress?.Report(report);
             }
             // remove duplicates
             var distinctList = list.Distinct().ToList();
@@ -557,7 +557,7 @@ namespace PicoNesLoader
 
             foreach (var item in distinctList)
             {
-                romList.Add((NesRom)item);
+                romList?.Add((NesRom)item);
             }
         }
         /// <summary>
@@ -601,7 +601,7 @@ namespace PicoNesLoader
                 var line = process.StandardOutput.ReadLine();
                 try
                 {
-                    var array = line.Split(']');
+                    var array = line?.Split(']');
                     if (array.Length == 2)
                     {
                         report.Complete = int.Parse(array[1].Substring(0, array[1].Length - 1));
@@ -619,7 +619,7 @@ namespace PicoNesLoader
                 outputOfPicoToolFlash = output;
             }
             report.Complete = 100;
-            progress.Report(report);
+            progress?.Report(report);
         }
         /// <summary>
         /// Report Progress of an async task.
