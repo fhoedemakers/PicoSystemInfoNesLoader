@@ -58,7 +58,7 @@
             this.labelTotalSize = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.linkLabelUpdate = new System.Windows.Forms.LinkLabel();
+            this.linkLabelUpdateUf2 = new System.Windows.Forms.LinkLabel();
             this.labelFlashBinaryEnd = new System.Windows.Forms.Label();
             this.labelFlashBinaryStart = new System.Windows.Forms.Label();
             this.labelFlashSize = new System.Windows.Forms.Label();
@@ -355,7 +355,7 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.linkLabelUpdate);
+            this.groupBox3.Controls.Add(this.linkLabelUpdateUf2);
             this.groupBox3.Controls.Add(this.labelFlashBinaryEnd);
             this.groupBox3.Controls.Add(this.labelFlashBinaryStart);
             this.groupBox3.Controls.Add(this.labelFlashSize);
@@ -373,16 +373,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "PicoSystem Info";
             // 
-            // linkLabelUpdate
+            // linkLabelUpdateUf2
             // 
-            this.linkLabelUpdate.AutoSize = true;
-            this.linkLabelUpdate.Location = new System.Drawing.Point(242, 27);
-            this.linkLabelUpdate.Name = "linkLabelUpdate";
-            this.linkLabelUpdate.Size = new System.Drawing.Size(99, 15);
-            this.linkLabelUpdate.TabIndex = 10;
-            this.linkLabelUpdate.TabStop = true;
-            this.linkLabelUpdate.Text = "Update Available!";
-            this.linkLabelUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelUpdate_LinkClicked);
+            this.linkLabelUpdateUf2.AutoSize = true;
+            this.linkLabelUpdateUf2.Location = new System.Drawing.Point(187, 50);
+            this.linkLabelUpdateUf2.Name = "linkLabelUpdateUf2";
+            this.linkLabelUpdateUf2.Size = new System.Drawing.Size(99, 15);
+            this.linkLabelUpdateUf2.TabIndex = 10;
+            this.linkLabelUpdateUf2.TabStop = true;
+            this.linkLabelUpdateUf2.Text = "Update Available!";
+            this.linkLabelUpdateUf2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelUpdate_LinkClicked);
             // 
             // labelFlashBinaryEnd
             // 
@@ -552,7 +552,7 @@
         private Label labelFlashSize;
         private Label labelProgramVersion;
         private Label labelProgramName;
-        private LinkLabel linkLabelUpdate;
+        private LinkLabel linkLabelUpdateUf2;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumnName;

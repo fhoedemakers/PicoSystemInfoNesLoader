@@ -15,8 +15,9 @@ namespace PicoNesLoader
     public partial class PicoLoader : Form
     {
         #region constants
-        private const string programVersion = "v0.1-alpha";
+        private const string programVersion = "v0.2-alpha";
         private const string flashProgramName = "PicoSystem_InfoNes";
+        private const string uiProgramName = "PicoSystemInfoNesLoader";
         private const long defaultMaxTarSize = 12 * 1024 * 1024;
         private const long defaultFlashStart = 0x10110000;
         const string NoDriverInstalled = "You may need to install the USB driver.";
@@ -25,6 +26,8 @@ namespace PicoNesLoader
         #endregion
 
         #region fields
+        private string latestUiVersion;
+        private string latestUf2Version;
         private long MaxTarSize = defaultMaxTarSize;  // Maximum size of archive containing roms
         private long totalTarSize;
         private enum PicoSystemStatus { OK, NoBootSel, NeedDriver, UnknownError };
@@ -32,12 +35,15 @@ namespace PicoNesLoader
 
         private bool tasksRunning = false;
         private bool alreadyAskedForUpdate = false;
+        private bool alreadyAskedForUiUpdate = false;
         private string outputOfPicoTool = string.Empty;
         private string outputOfPicoToolFlash = string.Empty;
         private SortableBindingList<NesRom> romList = new SortableBindingList<NesRom>();
         private RP2040 picoSystemInfo;
         private GitHub gh = new GitHub("fhoedemakers", "PicoSystem_InfoNes");
+        private GitHub ghUI = new GitHub("fhoedemakers", "PicoSystemInfoNesLoader");
         private string? latestPicoSystem_InfoNesReleaseUrl;
+        private string? latestUi_ReleaseUrl;
         private Progress<ProgressReport> progress;
         #endregion
 
@@ -86,7 +92,7 @@ namespace PicoNesLoader
         private void PicoLoader_Load(object sender, EventArgs e)
         {
             labelAppVersion.Text = programVersion;
-            linkLabelUpdate.Visible = false;
+            linkLabelUpdateUf2.Visible = false;
             ResetPicoSystemInfoLabels();
             growLabel1.Text = infoLabelText;
             toolStripStatusLabelLinkToDriver.Visible = false;
@@ -190,12 +196,27 @@ namespace PicoNesLoader
             DisplayPicoStatus();
             CalculateTarSize();
             // check only once for update
+            if ( ! alreadyAskedForUiUpdate)
+            {
+                alreadyAskedForUiUpdate = true;
+                if (await IsUpdateAvailableForUIAsync())
+                {
+                    var dResult = MessageBox.Show($"A new version ({latestUiVersion}) for this program is available on GitHub.\r\nDo you want to download it?", "New version available.", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    if (dResult == DialogResult.Yes)
+                    {
+                        Process.Start(new ProcessStartInfo(latestUi_ReleaseUrl) { UseShellExecute = true });
+                        Application.Exit();
+                    }
+                };
+            }
             if (!alreadyAskedForUpdate && picoSystemStatus == PicoSystemStatus.OK)
             {
                 try
                 {
                     alreadyAskedForUpdate = true;
-                    linkLabelUpdate.Visible = await IsUpdateAvailableForEmulatorAsync();
+                   
+                    linkLabelUpdateUf2.Visible = await IsUpdateAvailableForEmulatorAsync();
+                    linkLabelUpdateUf2.Text = $"Update available ({latestUf2Version})";
                     if (picoSystemInfo.ProgramName != flashProgramName)
                     {
                         await AskforFlashNewUf2Async();
@@ -252,7 +273,7 @@ namespace PicoNesLoader
             {
                 if (await AskforFlashNewUf2Async())
                 {
-                    linkLabelUpdate.Visible = false;
+                    linkLabelUpdateUf2.Visible = false;
                 };
             }
             catch (Exception ex)
@@ -437,19 +458,19 @@ namespace PicoNesLoader
                     break;
                 case PicoSystemStatus.NoBootSel:
                     buttonCreateTar.Enabled = false;
-                    linkLabelUpdate.Visible = false;
+                    linkLabelUpdateUf2.Visible = false;
                     toolStripStatusLabelCheckPico.Text = "PicoSystem not connected! Please connect device to an USB port, then press X and power on device.";
                     break;
                 case PicoSystemStatus.NeedDriver:
                     buttonCreateTar.Enabled = false;
                     toolStripStatusLabelCheckPico.Text = "Cannot connect to PicoSystem! Please install USB driver!";
                     toolStripStatusLabelLinkToDriver.Visible = true;
-                    linkLabelUpdate.Visible = false;
+                    linkLabelUpdateUf2.Visible = false;
                     break;
                 default:
                     buttonCreateTar.Enabled = false;
                     MessageBox.Show(outputOfPicoTool, "PicoSystem", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    linkLabelUpdate.Visible = false;
+                    linkLabelUpdateUf2.Visible = false;
                     break;
             }
         }
@@ -459,7 +480,7 @@ namespace PicoNesLoader
         /// <returns></returns>
         private async Task<bool> AskforFlashNewUf2Async()
         {
-            var result = MessageBox.Show("Install InfoNes emulator on Pimoroni PicoSystem?", "PicoSystem_InfoNes not installed.", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+            var result = MessageBox.Show($"Install latest version ({latestUf2Version}) of InfoNes emulator on Pimoroni PicoSystem?", "PicoSystem_InfoNes not installed.", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
             if (result == DialogResult.Yes)
             {
                 tasksRunning = true;
@@ -467,7 +488,7 @@ namespace PicoNesLoader
                 await FlashUf2ToPicoSystemAsync(progress);
                 panelButtons.Enabled = true;
                 tasksRunning = false;
-                linkLabelUpdate.Visible = false;
+                linkLabelUpdateUf2.Visible = false;
                 return true;
             }
             else { return false; }
@@ -525,8 +546,26 @@ namespace PicoNesLoader
             latestPicoSystem_InfoNesReleaseUrl = (from asset in release?["assets"]
                                                   where asset?["name"]?.Value<string>() == $"{flashProgramName?.ToLower()}.uf2"
                                                   select asset?["browser_download_url"]?.Value<string>())?.FirstOrDefault();
-            string? version = release?["tag_name"]?.Value<string>();
-            if (version?.CompareTo(picoSystemInfo.ProgramVersion) > 0 || picoSystemInfo.ProgramVersion == "0.1")
+            latestUf2Version = release?["tag_name"]?.Value<string>();
+            if (latestUf2Version?.CompareTo(picoSystemInfo.ProgramVersion) > 0 || picoSystemInfo.ProgramVersion == "0.1")
+            { 
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check whether a new Version of the UI is available on GitHub
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> IsUpdateAvailableForUIAsync()
+        {
+            JObject release = await ghUI.GetLatestReleaseAsync();
+            latestUi_ReleaseUrl = (from asset in release?["assets"]
+                                                  where asset?["name"]?.Value<string>() == $"{uiProgramName}.zip"
+                                                  select asset?["browser_download_url"]?.Value<string>())?.FirstOrDefault();
+            latestUiVersion = release?["tag_name"]?.Value<string>();
+            if (latestUiVersion?.CompareTo(programVersion) > 0 )
             {
                 return true;
             }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using PicoSystemInfoNesLoader;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,37 +16,11 @@ namespace PicoNesLoader
     /// <summary>
     /// Class for accessing the GitHub API
     /// </summary>
-    public class GitHub
-    {
-       
-        private string ApiToken = "";
+    public class GitHub :GitHubBase
+    {    
         #region properties
         public string Owner { get; }
-        public string Repo { get; }
-
-        private static HttpClient _httpClient = null;
-        private HttpClient Client
-        {
-            get { 
-                if ( _httpClient == null)
-                {
-                    _httpClient = new HttpClient()
-                    {
-                        BaseAddress = new Uri("https://api.github.com")
-                    };
-                    _httpClient.DefaultRequestHeaders.Accept.Clear();
-                    _httpClient.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-                    _httpClient.DefaultRequestHeaders.Add("User-Agent", "PicoSystem_InfoNes");
-                    if (!string.IsNullOrEmpty(ApiToken))
-                    {
-                        _httpClient.DefaultRequestHeaders.Authorization =new AuthenticationHeaderValue("token", ApiToken);
-                    
-                    }
-                }                 
-                return _httpClient; 
-            }
-        }
+        public string Repo { get; }  
         #endregion
 
         #region methods
