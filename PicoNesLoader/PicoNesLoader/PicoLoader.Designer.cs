@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PicoLoader));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelAppVersion = new System.Windows.Forms.Label();
             this.growLabel1 = new PicoNesLoader.GrowLabel();
@@ -58,7 +59,7 @@
             this.labelTotalSize = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.linkLabelUpdate = new System.Windows.Forms.LinkLabel();
+            this.linkLabelUpdateUf2 = new System.Windows.Forms.LinkLabel();
             this.labelFlashBinaryEnd = new System.Windows.Forms.Label();
             this.labelFlashBinaryStart = new System.Windows.Forms.Label();
             this.labelFlashSize = new System.Windows.Forms.Label();
@@ -69,6 +70,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             this.groupBoxList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -77,6 +79,7 @@
             this.statusStrip1.SuspendLayout();
             this.panelButtons.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -355,7 +358,7 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.linkLabelUpdate);
+            this.groupBox3.Controls.Add(this.linkLabelUpdateUf2);
             this.groupBox3.Controls.Add(this.labelFlashBinaryEnd);
             this.groupBox3.Controls.Add(this.labelFlashBinaryStart);
             this.groupBox3.Controls.Add(this.labelFlashSize);
@@ -373,16 +376,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "PicoSystem Info";
             // 
-            // linkLabelUpdate
+            // linkLabelUpdateUf2
             // 
-            this.linkLabelUpdate.AutoSize = true;
-            this.linkLabelUpdate.Location = new System.Drawing.Point(242, 27);
-            this.linkLabelUpdate.Name = "linkLabelUpdate";
-            this.linkLabelUpdate.Size = new System.Drawing.Size(99, 15);
-            this.linkLabelUpdate.TabIndex = 10;
-            this.linkLabelUpdate.TabStop = true;
-            this.linkLabelUpdate.Text = "Update Available!";
-            this.linkLabelUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelUpdate_LinkClicked);
+            this.linkLabelUpdateUf2.AutoSize = true;
+            this.linkLabelUpdateUf2.Location = new System.Drawing.Point(187, 50);
+            this.linkLabelUpdateUf2.Name = "linkLabelUpdateUf2";
+            this.linkLabelUpdateUf2.Size = new System.Drawing.Size(99, 15);
+            this.linkLabelUpdateUf2.TabIndex = 10;
+            this.linkLabelUpdateUf2.TabStop = true;
+            this.linkLabelUpdateUf2.Text = "Update Available!";
+            this.linkLabelUpdateUf2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelUpdate_LinkClicked);
             // 
             // labelFlashBinaryEnd
             // 
@@ -478,11 +481,24 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Program Name:";
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(537, 334);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(240, 108);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 7;
+            this.pictureBox1.TabStop = false;
+            // 
             // PicoLoader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 526);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.panelButtons);
             this.Controls.Add(this.statusStrip1);
@@ -508,6 +524,7 @@
             this.panelButtons.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -552,12 +569,13 @@
         private Label labelFlashSize;
         private Label labelProgramVersion;
         private Label labelProgramName;
-        private LinkLabel linkLabelUpdate;
+        private LinkLabel linkLabelUpdateUf2;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumnName;
         private DataGridViewTextBoxColumn SizeinKBytes;
         private DataGridViewButtonColumn DeleteRow;
         private Label labelAppVersion;
+        private PictureBox pictureBox1;
     }
 }
