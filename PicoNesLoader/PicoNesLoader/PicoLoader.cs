@@ -201,10 +201,10 @@ namespace PicoNesLoader
                 alreadyAskedForUiUpdate = true;
                 if (await IsUpdateAvailableForUIAsync())
                 {
-                    var dResult = MessageBox.Show($"A new version ({latestUiVersion}) for this program is available on GitHub.\r\nDo you want to download it?", "New version available.", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    var dResult = MessageBox.Show($"A new version ({latestUiVersion}) for this program is available.\r\nClose program and open download page?", "New version available.", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                     if (dResult == DialogResult.Yes)
                     {
-                        Process.Start(new ProcessStartInfo(latestUi_ReleaseUrl) { UseShellExecute = true });
+                        Process.Start(new ProcessStartInfo("https://github.com/fhoedemakers/PicoSystemInfoNesLoader/releases/latest") { UseShellExecute = true });
                         Application.Exit();
                     }
                 };
