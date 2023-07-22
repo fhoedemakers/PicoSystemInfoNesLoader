@@ -15,7 +15,7 @@ namespace PicoNesLoader
     public partial class PicoLoader : Form
     {
         #region constants
-        private const string programVersion = "v0.2-alpha";
+        private const string programVersion = "v0.3-alpha";
         private const string flashProgramName = "PicoSystem_InfoNes";
         private const string uiProgramName = "PicoSystemInfoNesLoader";
         private const long defaultMaxTarSize = 12 * 1024 * 1024;
