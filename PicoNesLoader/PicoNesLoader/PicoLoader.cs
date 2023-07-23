@@ -15,7 +15,7 @@ namespace PicoNesLoader
     public partial class PicoLoader : Form
     {
         #region constants
-        private const string programVersion = "v0.3-alpha";
+        private const string programVersion = "v0.4-alpha";
         private const string flashProgramName = "PicoSystem_InfoNes";
         private const string uiProgramName = "PicoSystemInfoNesLoader";
         private const long defaultMaxTarSize = 12 * 1024 * 1024;
@@ -358,9 +358,18 @@ namespace PicoNesLoader
             //Debug.Print("{0}", process.ExitCode);
             if (process.ExitCode == 0)
             {
-                var lines = outputOfPicoTool.Split(Environment.NewLine);
-                picoSystemInfo = new RP2040(lines);
-                MaxTarSize = picoSystemInfo.ProgramBinaryStart + picoSystemInfo.FlashSizeBytes - defaultFlashStart + 1;
+                try
+                {
+                    var lines = outputOfPicoTool.Split(Environment.NewLine);
+                    picoSystemInfo = new RP2040(lines);
+                    MaxTarSize = picoSystemInfo.ProgramBinaryStart + picoSystemInfo.FlashSizeBytes - defaultFlashStart + 1;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error parsing PicoSystem info: {ex.Message}\nApplication will exit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
+                    Application.Exit();
+                }
                 SetPicoSystemInfoLabels();
 
             }
