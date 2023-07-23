@@ -28,13 +28,48 @@ namespace PicoNesLoader
         /// <param name="info">Output of Picotool info -a</param>
         public RP2040(string[] info)
         {
-            ProgramName= (info[1].Split(":")[1]).Trim();
-            ProgramVersion= (info[2].Split(":")[1]).Trim();
-            ProgramBinaryStartHex = (info[4].Split(":"))[1].Trim().Substring(2);
+           
+            int index;
+  
+            index = Array.FindIndex(info, row => row.Contains("name:"));
+            if ( index == -1)
+            {
+                throw new Exception("name: not found in picotool output.");
+            }   
+            ProgramName = (info[index].Split(":")[1]).Trim();
+
+            index = Array.FindIndex(info, row => row.Contains("version:"));
+            if ( index == -1)
+            {
+                throw new Exception("version: not found in picotool output.");
+            }
+            ProgramVersion = (info[index].Split(":")[1]).Trim();
+
+            // binary start: 0x10000000
+            index = Array.FindIndex(info, row => row.Contains("binary start:"));
+            if ( index == -1)
+            {
+                throw new Exception("binary start: not found in picotool output.");
+            }
+            ProgramBinaryStartHex = (info[index].Split(":"))[1].Trim().Substring(2);
             ProgramBinaryStart = Int32.Parse(ProgramBinaryStartHex, System.Globalization.NumberStyles.HexNumber);
-            ProgramBinaryEndHex = (info[5].Split(":"))[1].Trim().Substring(2);
+
+            // binary end:   0x1000c000
+            index = Array.FindIndex(info, row => row.Contains("binary end:"));
+            if ( index == -1)
+            {
+                throw new Exception("binary end: not found in picotool output.");
+            }
+            ProgramBinaryEndHex = (info[index].Split(":"))[1].Trim().Substring(2);
             ProgramBinaryEnd = Int32.Parse(ProgramBinaryEndHex, System.Globalization.NumberStyles.HexNumber);
-            var  tmpStr = (info[19].Split(":"))[1].Trim();
+
+            // flash size:   16384K
+            index = Array.FindIndex(info, row => row.Contains("flash size:"));
+            if ( index == -1)
+            {
+                throw new Exception("flash size: not found in picotool output.");
+            }
+            var  tmpStr = (info[index].Split(":"))[1].Trim();
             tmpStr = tmpStr.Substring(0, tmpStr.Length - 1);
             FlashSizeInKBytes = int.Parse(tmpStr);
             FlashSizeBytes = FlashSizeInKBytes * 1024;
