@@ -22,13 +22,13 @@ jobs:
         dotnet-version: 7.0.x
         
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore /p:EnableWindowsTargeting=true
       working-directory: PicoNesLoader
       
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore /p:EnableWindowsTargeting=true
       working-directory: PicoNesLoader
       
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal /p:EnableWindowsTargeting=true
       working-directory: PicoNesLoader
