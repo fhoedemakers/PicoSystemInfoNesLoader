@@ -4,6 +4,16 @@ Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choi
 
 Tested on Windows 11 x64.
 
+## v0.5-alpha
+
+Fixes:
+
+- none
+
+Features:
+
+- Automatic build and release creation using GitHub actions.
+
 ## v0.4-alpha
 
 Fixes:
@@ -16,10 +26,22 @@ Features:
 
 ## v0.3-alpha
 
+Fixes:
+
 - removed unused mapper 6
 
+Features:
+
+- none
+  
 ## v0.2-alpha
+
+Fixes: 
 
 - Update check for ui
 - Added picture to main form
+
+Features:
+
+- none
 
