@@ -8,6 +8,8 @@ on:
     push:
         tags:
           - "v*.*.*"
+          - "v*.*-alpha"
+          
 # Allow this workflow to write back to the repository
 permissions:
     contents: write
