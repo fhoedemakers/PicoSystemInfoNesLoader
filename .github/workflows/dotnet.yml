@@ -34,7 +34,7 @@ jobs:
       working-directory: PicoNesLoader
       
     - name: Publish
-      run: dotnet publish -c Release -r win-x86 --self-contained true /p:EnableWindowsTargeting=true
+      run: dotnet publish -c Release -r win-x86 --self-contained true /p:EnableWindowsTargeting=true -p:PublishSingleFile=true -p:PublishReadyToRun=true
       working-directory: PicoNesLoader
       
     - name: List
