@@ -1,4 +1,4 @@
-# CHANGELOG.md
+# CHANGELOG
 
 Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choice, then start PicoSystemInfoNesLoader.exe in subfolder PicoSystemInfoNesLoader.
 
