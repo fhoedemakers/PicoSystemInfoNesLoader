@@ -8,7 +8,10 @@ on:
     push:
         tags:
           - "v*.*.*"
-
+# Allow this workflow to write back to the repository
+permissions:
+    contents: write
+    
 jobs:
   build:
 
