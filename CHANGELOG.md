@@ -1,3 +1,5 @@
+# CHANGELOG.md
+
 Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choice, then start PicoSystemInfoNesLoader.exe in subfolder PicoSystemInfoNesLoader.
 
 Tested on Windows 11 x64.
