@@ -7,7 +7,7 @@ name: .NET Dployment
 on:
     push:
         tags:
-          - "v*.*-alpha"
+          - "v*.*.*"
 
 jobs:
   build:
