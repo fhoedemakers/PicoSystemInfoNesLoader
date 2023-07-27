@@ -43,6 +43,13 @@ jobs:
     - name: copy published files
       run: cp -r  PicoNesLoader/PicoNesLoader/bin/Release/net7.0-windows/win-x86/publish/* assets/PicoSystemInfoNesLoader
       
+    - name: Install zip
+      uses: montudor/action-zip@v1
+
+    - name: Zip output
+      run: zip -r PicoSystemInfoNesLoader.zip PicoSystemInfoNesLoader
+      working-directory: assets
+      
     - name: List
       run: ls -l
-      working-directory: assets/PicoSystemInfoNesLoader
+      working-directory: assets
