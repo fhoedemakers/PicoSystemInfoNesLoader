@@ -37,5 +37,12 @@ jobs:
       run: dotnet publish -c Release -r win-x86 --self-contained true /p:EnableWindowsTargeting=true -p:PublishSingleFile=true -p:PublishReadyToRun=true
       working-directory: PicoNesLoader
       
+    - name: Create asset direcory
+      run: mkdir -p assets/PicoSystemInfoNesLoader
+      
+    - name: copy published files
+      run: cp -r  PicoNesLoader/PicoNesLoader/bin/Release/net7.0-windows/win-x86/publish/* assets/PicoSystemInfoNesLoader
+      
     - name: List
-      run: ls -l  /home/runner/work/PicoSystemInfoNesLoader/PicoSystemInfoNesLoader/PicoNesLoader/PicoNesLoader/bin/Release/net7.0-windows/win-x86/publish/
+      run: ls -l
+      working-directory: assets/PicoSystemInfoNesLoader
