@@ -36,3 +36,6 @@ jobs:
     - name: Publish
       run: dotnet publish -c Release -r win-x86 --self-contained true /p:EnableWindowsTargeting=true
       working-directory: PicoNesLoader
+      
+    - name: List
+      run: ls -l  /home/runner/work/PicoSystemInfoNesLoader/PicoSystemInfoNesLoader/PicoNesLoader/PicoNesLoader/bin/Release/net7.0-windows/win-x86/publish/
