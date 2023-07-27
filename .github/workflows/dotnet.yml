@@ -32,3 +32,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal /p:EnableWindowsTargeting=true
       working-directory: PicoNesLoader
+      
+    - name: Publish
+      run: dotnet publish -c Release -r linux-x64 --self-contained true
+      working-directory: PicoNesLoader
