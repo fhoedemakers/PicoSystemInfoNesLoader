@@ -37,6 +37,7 @@ jobs:
           # Extract the tag name that triggered the event and remove the 'refs/tags/' prefix
           TAG_NAME=${{ github.ref }}
           echo "-->${TAG_NAME}<--"
+          pwd
           
     - name: Restore dependencies
       run: dotnet restore /p:EnableWindowsTargeting=true
