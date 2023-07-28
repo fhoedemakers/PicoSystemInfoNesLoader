@@ -12,9 +12,9 @@ name: .NET Deployment
 
 on:
     push:
-        branches: [ main ]
+        branches: [ master ]
     pull_request:
-        branches: [ main ]
+        branches: [ master ]
         
 # Allow this workflow to write back to the repository
 permissions:
