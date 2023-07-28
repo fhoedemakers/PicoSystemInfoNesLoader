@@ -4,12 +4,16 @@
 name: .NET Deployment
 
 # Only deploy when a new tag is pushed
+#on:
+#    push:
+#        tags:
+#          - "v*.*.*"
+#          - "v*.*-alpha"
+
 on:
     push:
-        tags:
-          - "v*.*.*"
-          - "v*.*-alpha"
-          
+        branches: [main]
+        
 # Allow this workflow to write back to the repository
 permissions:
     contents: write
@@ -25,7 +29,13 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
-        
+       
+    - name: Show Tag
+      run: |
+          # Extract the tag name that triggered the event and remove the 'refs/tags/' prefix
+          TAG_NAME=${{ github.ref }}
+          echo "-->${TAG_NAME}<--"
+          
     - name: Restore dependencies
       run: dotnet restore /p:EnableWindowsTargeting=true
       working-directory: PicoNesLoader
