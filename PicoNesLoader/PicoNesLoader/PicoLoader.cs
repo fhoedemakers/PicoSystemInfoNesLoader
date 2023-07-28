@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using PicoSystemInfoNesLoader;
 using System;
 using System.Collections.Immutable;
 using System.ComponentModel;
@@ -15,7 +16,7 @@ namespace PicoNesLoader
     public partial class PicoLoader : Form
     {
         #region constants
-        private const string programVersion = "v0.4-alpha";
+       
         private const string flashProgramName = "PicoSystem_InfoNes";
         private const string uiProgramName = "PicoSystemInfoNesLoader";
         private const long defaultMaxTarSize = 12 * 1024 * 1024;
@@ -26,6 +27,7 @@ namespace PicoNesLoader
         #endregion
 
         #region fields
+        private string programVersion = VersionInfo.CurrentVersion;
         private string latestUiVersion;
         private string latestUf2Version;
         private long MaxTarSize = defaultMaxTarSize;  // Maximum size of archive containing roms
@@ -574,7 +576,7 @@ namespace PicoNesLoader
                                                   where asset?["name"]?.Value<string>() == $"{uiProgramName}.zip"
                                                   select asset?["browser_download_url"]?.Value<string>())?.FirstOrDefault();
             latestUiVersion = release?["tag_name"]?.Value<string>();
-            if (latestUiVersion?.CompareTo(programVersion) > 0 )
+            if (latestUiVersion?.CompareTo(programVersion) > 0 && programVersion != "DEVVERSION")
             {
                 return true;
             }
