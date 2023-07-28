@@ -2,7 +2,9 @@
 
 # General Info
 
-Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choice, then start PicoSystemInfoNesLoader.exe in subfolder PicoSystemInfoNesLoader.
+Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choice, then start PicoSystemInfoNesLoader.exe in subfolder PicoSystemInfoNesLoader. It can take a minute before the application starts.
+
+> When you see the message "Windows protected your PC", click on "More Info", then click on "Run anyway". See [Readme](README.md) for more info.
 
 Tested on Windows 11 x64.
 
