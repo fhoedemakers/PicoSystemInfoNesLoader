@@ -38,6 +38,22 @@ jobs:
           TAG_NAME=${{ github.ref }}
           echo "-->${TAG_NAME}<--"
           pwd
+    - name: Update VersionInfo.cs with associated tag if it exists
+      run: |
+           # Extract the tag name that triggered the event and remove the 'refs/tags/' prefix
+           cd PicoNesLoader/PicoNesLoader
+           input_string=${{ github.ref }}
+           prefix="refs/tags/"
+           tag="Not found"
+           if [[ $input_string == $prefix* ]]; then
+                echo "The string starts with 'refs/tags/'."
+                tag="${input_string#$prefix}"        
+           else
+                echo "The string does not start with 'refs/tags/'."
+           fi
+           echo "Tag is ${tag}"
+           sed -i "s/DEVVERSION/${TAG_NAME}/g" VersionInfo.cs
+           cat VersionInfo.cs
           
     - name: Restore dependencies
       run: dotnet restore /p:EnableWindowsTargeting=true
