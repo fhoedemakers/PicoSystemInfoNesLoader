@@ -6,6 +6,8 @@ Because there is no SD card available, this application lets the user choose NES
 
 It is also possible to flash a new version of the Emulator to the PicoSystem.
 
+The application is tested in Windows 11 x64. The application should also work on a 32 and 64 bit versions of Windows 10. 
+
 ![Screenshot](assets/Screen.png)
 
 ## Where to buy the PicoSystem
