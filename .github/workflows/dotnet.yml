@@ -1,7 +1,6 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+# This workflow will build the project and create a release when a new tag is created
 
-name: .NET Deployment
+name: Build and release
 
 # Only deploy when a new tag is pushed
 on:
