@@ -4,18 +4,18 @@
 name: .NET Deployment
 
 # Only deploy when a new tag is pushed
-#on:
-#    push:
-#        tags:
-#          - "v*.*.*"
-#          - "v*.*-alpha"
-
 on:
     push:
-        branches: [ master ]
-    pull_request:
-        branches: [ master ]
-        
+        tags:
+          - "v*.*.*"
+          - "v*.*-alpha"
+
+#on:
+#    push:
+#        branches: [ master ]
+#    pull_request:
+#        branches: [ master ]
+
 # Allow this workflow to write back to the repository
 permissions:
     contents: write
@@ -38,7 +38,7 @@ jobs:
            cd PicoNesLoader/PicoNesLoader
            input_string=${{ github.ref }}
            prefix="refs/tags/"
-           tag="Not found"
+           tag="No versioninfo found"
            if [[ $input_string == $prefix* ]]; then
                 echo "The string starts with 'refs/tags/'."
                 tag="${input_string#$prefix}"        
