@@ -555,7 +555,7 @@ namespace PicoNesLoader
         {
             JObject release = await gh.GetLatestReleaseAsync();
             latestPicoSystem_InfoNesReleaseUrl = (from asset in release?["assets"]
-                                                  where asset?["name"]?.Value<string>() == $"{flashProgramName?.ToLower()}.uf2"
+                                                  where asset?["name"]?.Value<string>()?.ToLower() == $"{flashProgramName?.ToLower()}.uf2"
                                                   select asset?["browser_download_url"]?.Value<string>())?.FirstOrDefault();
             latestUf2Version = release?["tag_name"]?.Value<string>();
             if (latestUf2Version?.CompareTo(picoSystemInfo.ProgramVersion) > 0 || picoSystemInfo.ProgramVersion == "0.1")
