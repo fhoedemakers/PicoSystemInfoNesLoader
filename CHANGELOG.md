@@ -6,6 +6,16 @@ Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choi
 
 Tested on Windows 11 x64.
 
+## v0.6-alpha
+
+Fixes:
+
+- Fixed version check. VersionInfo.cs will be updated automatically by the build process when build is triggered by a tag.
+
+Features:
+
+- none
+
 ## v0.5-alpha
 
 Fixes:
