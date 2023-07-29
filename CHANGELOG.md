@@ -8,6 +8,16 @@ Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choi
 
 Tested on Windows 11 x64.
 
+## v0.7-alpha
+
+Fixes:
+
+- Fixes #5 Black console screen shown when application is built using GitHub Action.
+
+Features:
+
+- none
+  
 ## v0.6-alpha
 
 Fixes:
