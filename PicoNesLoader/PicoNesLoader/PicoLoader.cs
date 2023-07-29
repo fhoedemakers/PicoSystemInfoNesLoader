@@ -349,7 +349,8 @@ namespace PicoNesLoader
                     Arguments = "info -a",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
             process.Start();
@@ -638,7 +639,8 @@ namespace PicoNesLoader
                     Arguments = $"load {filename} -t {binaryType}{offsetArg}",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
             process.Start();
