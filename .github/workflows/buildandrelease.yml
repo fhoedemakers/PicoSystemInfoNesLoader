@@ -41,7 +41,6 @@ jobs:
                # Extract the tag name that triggered the event and remove the 'refs/tags/' prefix
                # change directory to the solution folder
                cd $env:solution_folder
-               dir
                $inputString = $env:GITHUB_REF
                write-host "Input string is $inputString"
                $prefix = "refs/tags/"
