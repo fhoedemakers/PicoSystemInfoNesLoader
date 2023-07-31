@@ -7,7 +7,17 @@ Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choi
 > When you see the message "Windows protected your PC", click on "More Info", then click on "Run anyway". See [Readme](README.md) for more info.
 
 Tested on Windows 11 x64.
-  
+
+## v0.7-alpha
+
+Fixes:
+
+- Fixed issue [#5](https://github.com/fhoedemakers/PicoSystemInfoNesLoader/issues/5) Black console screen shown when application is built using GitHub Action. Created new BuildAndRelease.yml action which runs on windows-latest. Disabled the old dotnet.yml workflow
+
+Features:
+
+- none
+   
 ## v0.6-alpha
 
 Fixes:
