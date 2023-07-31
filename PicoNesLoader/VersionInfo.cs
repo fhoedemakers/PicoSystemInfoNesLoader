@@ -10,6 +10,7 @@ namespace PicoSystemInfoNesLoader
     {
         // This is the version of the application. It is used to check for updates.
         // Will be updated by the build process in the GitHub Action.
+        // DO NOI EDIT THIS FILE MANUALLY!
         public static string CurrentVersion = "DEVVERSION";
     }
 }
