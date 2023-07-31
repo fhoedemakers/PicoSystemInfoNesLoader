@@ -6,8 +6,7 @@ name: Build and release
 on:
     push:
         tags:
-          - "v*.*.*"
-          - "v*.*-alpha"
+          - "vDONOTUSE"
 
 #on:
 #    push:
