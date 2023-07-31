@@ -1,4 +1,4 @@
-# Build and release the project to GitHub Packages using Windows-Server-2022
+# Build and release the project to GitHub using Windows-Server-2022
 name: Build and release new version
 
 # Only deploy when a new tag is pushed
