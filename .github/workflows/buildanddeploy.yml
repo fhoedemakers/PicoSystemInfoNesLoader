@@ -7,9 +7,9 @@ on:
     #    tags:
     #      - "v*.*.*"
     #      - "v*.*-alpha"
-        branches: [ main ]
+        branches: [ master ]
     pull_request:
-        branches: [ main ]
+        branches: [ master ]
 
 
 # Allow this workflow to write back to the repository
