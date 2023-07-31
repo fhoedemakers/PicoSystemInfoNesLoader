@@ -16,7 +16,7 @@ Fixes:
 
 Features:
 
-- none
+- none.
    
 ## v0.6-alpha
 
