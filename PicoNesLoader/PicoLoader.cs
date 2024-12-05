@@ -636,7 +636,7 @@ namespace PicoNesLoader
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = picoTool,
-                    Arguments = $"load {filename} -t {binaryType}{offsetArg}",
+                    Arguments = $"load \"{filename}\" -t {binaryType}{offsetArg}",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,

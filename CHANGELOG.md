@@ -8,6 +8,16 @@ Download and extract the zipfile PicoSystemInfoNesLoader.zip to a folder of choi
 
 Tested on Windows 11 x64.
 
+## v0.8-alpha
+
+Fixes:
+
+- Fix filename handling in ProcessStartInfo arguments. [#8](https://github.com/fhoedemakers/PicoSystemInfoNesLoader/issues/8)
+  
+Features:
+
+- none
+  
 ## v0.7-alpha
 
 Fixes:
